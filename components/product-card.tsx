@@ -26,13 +26,19 @@ interface ProductCardProps {
   compact?: boolean
 }
 
-export default function ProductCard({ product, showAction = false, compact = false }: ProductCardProps) {
+export default function ProductCard({
+  product,
+  showAction = false,
+  compact = false,
+}: ProductCardProps) {
   const [saved, setSaved] = useState(false)
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-[#d8dfdc] bg-white transition duration-300 hover:-translate-y-1 hover:border-[#063f34]/40 hover:shadow-[0_18px_50px_rgba(18,40,33,0.10)]">
+    <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_12px_28px_rgba(18,40,33,0.08)]">
       <Link href={`/product/${product.id}`} className="block">
-        <div className={`relative overflow-hidden bg-[#edf2ef] ${compact ? "aspect-[4/3]" : "aspect-[4/4.5]"}`}>
+        <div
+          className={`relative overflow-hidden bg-[#edf2ef] ${compact ? "aspect-[4/3]" : "aspect-[4/4]"}`}
+        >
           <Image
             src={product.image}
             alt={product.name}
@@ -43,28 +49,28 @@ export default function ProductCard({ product, showAction = false, compact = fal
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/18 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
           {product.badge && (
-            <span className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] text-[#8b4206] shadow-sm">
+            <span className="absolute top-3 left-3 rounded-md bg-white/92 px-2.5 py-1 text-[11px] font-bold text-[#8b4206] uppercase shadow-sm">
               {product.badge}
             </span>
           )}
         </div>
       </Link>
 
-      <div className="p-5">
+      <div className="p-4">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>
-            <p className="mb-1 text-xs font-bold uppercase tracking-[0.12em] text-[#9a4d10]">
+            <p className="mb-1 text-[11px] font-bold text-[#9a4d10] uppercase">
               {product.category}
             </p>
             <Link href={`/product/${product.id}`}>
-              <h3 className="text-[20px] font-bold leading-tight text-[#063f34] transition group-hover:text-[#0b5b4a]">
+              <h3 className="text-base leading-snug font-bold text-[#063f34] transition group-hover:text-[#0b5b4a]">
                 {product.name}
               </h3>
             </Link>
           </div>
           <button
             onClick={() => setSaved((value) => !value)}
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition ${
               saved
                 ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b]"
                 : "border-[#d8dfdc] bg-white text-[#53615c] hover:border-[#c8651b] hover:text-[#c8651b]"
@@ -75,8 +81,13 @@ export default function ProductCard({ product, showAction = false, compact = fal
           </button>
         </div>
 
-        <div className="mb-4 space-y-1 text-sm text-[#53615c]">
-          <p>by <span className="font-semibold text-[#25332e]">{product.seller}</span></p>
+        <div className="mb-3 space-y-1 text-sm text-[#53615c]">
+          <p>
+            by{" "}
+            <span className="font-semibold text-[#25332e]">
+              {product.seller}
+            </span>
+          </p>
           {product.sellerLocation && (
             <p className="flex items-center gap-1.5">
               <MapPin size={13} /> {product.sellerLocation}
@@ -87,7 +98,10 @@ export default function ProductCard({ product, showAction = false, compact = fal
         {!compact && product.materials && (
           <div className="mb-4 flex flex-wrap gap-2">
             {product.materials.slice(0, 2).map((material) => (
-              <span key={material} className="rounded-full bg-[#edf2ef] px-3 py-1 text-xs font-semibold text-[#355148]">
+              <span
+                key={material}
+                className="rounded-md bg-[#edf2ef] px-2.5 py-1 text-xs font-semibold text-[#355148]"
+              >
                 {material}
               </span>
             ))}
@@ -96,10 +110,14 @@ export default function ProductCard({ product, showAction = false, compact = fal
 
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-[24px] font-black tracking-tight text-[#1b211f]">${product.price.toFixed(2)}</p>
+            <p className="text-xl font-black tracking-tight text-[#1b211f]">
+              ${product.price.toFixed(2)}
+            </p>
             <p className="flex items-center gap-1 text-sm text-[#53615c]">
               <Star size={15} className="fill-[#c8651b] text-[#c8651b]" />
-              <span className="font-semibold text-[#1b211f]">{product.rating}</span>
+              <span className="font-semibold text-[#1b211f]">
+                {product.rating}
+              </span>
               {product.reviews ? <span>({product.reviews})</span> : null}
             </p>
           </div>
@@ -107,7 +125,7 @@ export default function ProductCard({ product, showAction = false, compact = fal
           {showAction && (
             <Link
               href={`/product/${product.id}`}
-              className="rounded-full bg-[#063f34] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#0b5b4a]"
+              className="rounded-lg bg-[#063f34] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#0b5b4a]"
             >
               View
             </Link>

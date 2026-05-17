@@ -91,15 +91,6 @@
     --radius-2xl: 9999px;
     --radius-full: 9999px;
 
-    /* Spacing tokens */
-    --spacing-xs: 4px;
-    --spacing-sm: 12px;
-    --spacing-base: 8px;
-    --spacing-md: 24px;
-    --spacing-lg: 48px;
-    --spacing-xl: 80px;
-    --spacing-container-max: 1280px;
-    --spacing-gutter: 24px;
 }
 
 :root {
