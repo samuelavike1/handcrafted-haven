@@ -1,0 +1,43 @@
+import { NextResponse } from "next/server"
+import { updateProduct } from "@/lib/server-products"
+import { productInputSchema } from "@/lib/schemas"
+import { getCurrentUser, hasRole } from "@/lib/server-auth"
+
+interface RouteContext {
+  params: Promise<{ id: string }>
+}
+
+export async function PUT(request: Request, context: RouteContext) {
+  try {
+    const user = await getCurrentUser()
+    if (!hasRole(user, ["seller", "admin"])) {
+      return NextResponse.json(
+        { error: "Seller access is required to update products." },
+        { status: 401 }
+      )
+    }
+
+    const { id } = await context.params
+    const body = await request.json()
+    const parsed = productInputSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { errors: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+
+    const product = await updateProduct(id, parsed.data)
+    if (!product) {
+      return NextResponse.json({ error: "Product not found." }, { status: 404 })
+    }
+
+    return NextResponse.json({ product })
+  } catch {
+    return NextResponse.json(
+      { error: "Product could not be updated." },
+      { status: 500 }
+    )
+  }
+}

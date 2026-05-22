@@ -277,7 +277,7 @@ export default function HomePage() {
               href="/sell"
               className="mt-5 inline-flex w-fit items-center rounded-md bg-[#063f34] px-4 py-2 text-sm font-black text-white"
             >
-              Visit seller dashboard <ArrowRight className="ml-2" size={18} />
+              Start selling <ArrowRight className="ml-2" size={18} />
             </Link>
           </div>
         </section>

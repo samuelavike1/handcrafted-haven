@@ -3,9 +3,29 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
-import { Bell, Menu, Search, ShoppingBag, X } from "lucide-react"
+import { useEffect, useState } from "react"
+import {
+  Bell,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Search,
+  ShieldCheck,
+  ShoppingBag,
+  Store,
+  UserRound,
+  X,
+} from "lucide-react"
+import { toast } from "sonner"
 import appLogo from "../../Logo.jpg"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const navItems = [
   { label: "Browse", href: "/browse" },
@@ -13,21 +33,63 @@ const navItems = [
   { label: "Stories", href: "/stories" },
 ]
 
+type CurrentUser = {
+  name: string
+  email: string
+  role: "buyer" | "seller" | "admin"
+  studioName?: string
+}
+
+const dashboardHref = {
+  buyer: "/account",
+  seller: "/sell/dashboard",
+  admin: "/admin",
+}
+
 export default function Navbar() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [user, setUser] = useState<CurrentUser | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    async function loadUser() {
+      try {
+        const response = await fetch("/api/auth/me", { cache: "no-store" })
+        const data = await response.json()
+        if (active) setUser(data.user)
+      } catch {
+        if (active) setUser(null)
+      }
+    }
+
+    loadUser()
+    return () => {
+      active = false
+    }
+  }, [pathname])
+
+  const logout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" })
+    setUser(null)
+    toast.success("Signed out", {
+      description: "You have been signed out of Handcrafted Haven.",
+    })
+    window.location.href = "/"
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#d8dfdc] bg-[#fbfbf8]/95 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-[1080px] items-center gap-4 px-4 sm:px-5 lg:px-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="relative h-8 w-8 overflow-hidden rounded-md border border-[#d8dfdc] bg-white">
+          <span className="relative h-9 w-9 overflow-hidden rounded-md border border-[#d8dfdc] bg-white p-0.5">
             <Image
               src={appLogo}
               alt="Handcrafted Haven logo"
               fill
-              className="object-cover"
-              sizes="32px"
+              className="object-contain"
+              sizes="36px"
               priority
             />
           </span>
@@ -88,23 +150,75 @@ export default function Navbar() {
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#c8651b]" />
           </Link>
           <button
+            onClick={() =>
+              toast.info("No new notifications", {
+                description: "Marketplace alerts will appear here.",
+              })
+            }
             className="hidden h-8 w-8 items-center justify-center rounded-md text-[#063f34] transition hover:bg-[#edf2ef] sm:flex"
             aria-label="Notifications"
           >
             <Bell size={18} />
           </button>
-          <button
-            className="relative hidden h-8 w-8 overflow-hidden rounded-md border border-[#d8dfdc] sm:block"
-            aria-label="Account"
-          >
-            <Image
-              src="/product_teapot_1779021133816.png"
-              alt=""
-              fill
-              className="object-cover"
-              unoptimized
-            />
-          </button>
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="hidden h-8 w-8 items-center justify-center rounded-md border border-[#d8dfdc] bg-white text-[#063f34] transition hover:bg-[#edf2ef] sm:flex"
+                  aria-label="Open account menu"
+                >
+                  <UserRound size={17} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-56 border border-[#cfd9d4] bg-white text-[#25332e] shadow-[0_16px_40px_rgba(18,40,33,0.18)]"
+              >
+                <DropdownMenuLabel className="text-[#53615c]">
+                  <span className="block font-black text-[#063f34]">
+                    {user.studioName ?? user.name}
+                  </span>
+                  <span className="block truncate text-xs">{user.email}</span>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={dashboardHref[user.role]}>
+                    <LayoutDashboard size={15} />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                {user.role === "seller" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/sell/dashboard">
+                      <Store size={15} />
+                      Seller studio
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {user.role === "admin" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin">
+                      <ShieldCheck size={15} />
+                      Admin
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} variant="destructive">
+                  <LogOut size={15} />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden h-8 items-center justify-center gap-1.5 rounded-md border border-[#d8dfdc] px-3 text-xs font-black text-[#063f34] transition hover:bg-[#edf2ef] sm:flex"
+            >
+              <UserRound size={15} />
+              Sign in
+            </Link>
+          )}
           <button
             className="flex h-8 w-8 items-center justify-center rounded-md text-[#063f34] transition hover:bg-[#edf2ef] md:hidden"
             onClick={() => setMobileOpen((open) => !open)}
@@ -138,6 +252,24 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href={user ? dashboardHref[user.role] : "/login"}
+              className="rounded-md px-3 py-2 text-sm font-semibold text-[#063f34] hover:bg-[#edf2ef]"
+              onClick={() => setMobileOpen(false)}
+            >
+              {user ? "My account" : "Sign in"}
+            </Link>
+            {user && (
+              <button
+                className="rounded-md px-3 py-2 text-left text-sm font-semibold text-[#ba1a1a] hover:bg-[#fff4f4]"
+                onClick={() => {
+                  setMobileOpen(false)
+                  logout()
+                }}
+              >
+                Sign out
+              </button>
+            )}
           </div>
         </div>
       )}
