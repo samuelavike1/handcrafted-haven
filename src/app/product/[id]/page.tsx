@@ -62,8 +62,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               image: product.image,
               price: product.price,
               stock: product.stock,
+              seller: product.seller,
+              category: product.category,
+              description: product.description,
             }}
             galleryImages={galleryImages}
+            variant="gallery"
           />
 
           <div className="lg:pl-4">
@@ -111,9 +115,20 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               ))}
             </div>
 
-            <p className="mt-4 text-sm font-black text-[#53615c]">
-              {product.stock} in stock
-            </p>
+            <ProductDetailClient
+              product={{
+                id: product.id,
+                name: product.name,
+                image: product.image,
+                price: product.price,
+                stock: product.stock,
+                seller: product.seller,
+                category: product.category,
+                description: product.description,
+              }}
+              galleryImages={galleryImages}
+              variant="actions"
+            />
 
             <div className="mt-4 grid gap-2 text-xs font-semibold text-[#53615c] sm:grid-cols-3">
               <span className="flex items-center gap-2">

@@ -11,7 +11,6 @@ export const authRegistrationSchema = z
     studioName: z.string().trim().optional(),
     location: z.string().trim().optional(),
     story: z.string().trim().optional(),
-    adminCode: z.string().trim().optional(),
   })
   .superRefine((value, context) => {
     if (value.role === "seller") {
@@ -38,11 +37,11 @@ export const authRegistrationSchema = z
       }
     }
 
-    if (value.role === "admin" && value.adminCode !== "HAVEN_ADMIN_DEMO") {
+    if (value.role === "admin") {
       context.addIssue({
         code: "custom",
-        path: ["adminCode"],
-        message: "Enter the admin invitation code.",
+        path: ["role"],
+        message: "Admins can only be created by an authenticated admin.",
       })
     }
   })
@@ -94,9 +93,28 @@ export const sellerLoginSchema = z.object({
   password: z.string().min(1, "Password is required."),
 })
 
+export const checkoutItemSchema = z.object({
+  productId: z.string().trim().min(1),
+  quantity: z.coerce.number().int().min(1).max(99),
+})
+
+export const checkoutSchema = z.object({
+  customer: z.object({
+    name: z.string().trim().min(2, "Full name is required."),
+    email: z.string().trim().email("Enter a valid email address."),
+    street: z.string().trim().min(4, "Street address is required."),
+    apartment: z.string().trim().optional(),
+    city: z.string().trim().min(2, "City is required."),
+    postalCode: z.string().trim().min(3, "ZIP or postal code is required."),
+  }),
+  paymentMethod: z.enum(["card", "wallet"]).default("card"),
+  items: z.array(checkoutItemSchema).min(1, "Your cart is empty."),
+})
+
 export type ProductInput = z.infer<typeof productInputSchema>
 export type AuthRegistrationInput = z.infer<typeof authRegistrationSchema>
 export type AuthLoginInput = z.infer<typeof authLoginSchema>
 export type AdminCreateInput = z.infer<typeof adminCreateSchema>
 export type UserRole = z.infer<typeof userRoleSchema>
 export type SellerRegistrationInput = z.infer<typeof sellerRegistrationSchema>
+export type CheckoutInput = z.infer<typeof checkoutSchema>

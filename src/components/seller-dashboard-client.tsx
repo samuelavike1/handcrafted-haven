@@ -12,12 +12,13 @@ import {
   Info,
   Loader2,
   MapPin,
+  PackageCheck,
   PackagePlus,
   Star,
   Truck,
 } from "lucide-react"
 import { toast } from "sonner"
-import { featuredSeller, products as fallbackProducts } from "@/lib/market-data"
+import { featuredSeller } from "@/lib/market-data"
 import {
   Dialog,
   DialogContent,
@@ -54,15 +55,27 @@ type Listing = {
 
 type FieldErrors = Partial<Record<keyof Listing, string[]>>
 
-const fallbackListings: Listing[] = fallbackProducts
-  .slice(0, 4)
-  .map((product, index) => ({
-    ...product,
-    reviews: product.reviews ?? 0,
-    materials: product.materials ?? [],
-    stock: index === 3 ? 2 : 12 - index * 2,
-    status: index === 3 ? "Low stock" : "Active",
-  }))
+type SellerOrder = {
+  id: string
+  status: "Processing" | "Shipped" | "Delivered"
+  total: number
+  createdAt: string
+  items: {
+    productId: string
+    name: string
+    quantity: number
+    price: number
+  }[]
+}
+
+type DashboardStats = {
+  revenue: number
+  unitsSold: number
+  unfulfilledOrders: number
+  orderCount: number
+  activeListings: number
+  lowStockCount: number
+}
 
 const emptyListing: Listing = {
   id: "",
@@ -81,8 +94,30 @@ const emptyListing: Listing = {
   status: "Draft",
 }
 
-export default function SellerDashboardClient() {
-  const [listings, setListings] = useState<Listing[]>(fallbackListings)
+type SellerDashboardUser = {
+  name: string
+  email: string
+  studioName?: string
+  location?: string
+  story?: string
+}
+
+export default function SellerDashboardClient({
+  user,
+}: {
+  user: SellerDashboardUser
+}) {
+  const [listings, setListings] = useState<Listing[]>([])
+  const [orders, setOrders] = useState<SellerOrder[]>([])
+  const [lowStock, setLowStock] = useState<Listing[]>([])
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats>({
+    revenue: 0,
+    unitsSold: 0,
+    unfulfilledOrders: 0,
+    orderCount: 0,
+    activeListings: 0,
+    lowStockCount: 0,
+  })
   const [modalMode, setModalMode] = useState<"add" | "edit" | null>(null)
   const [draft, setDraft] = useState<Listing>(emptyListing)
   const [errors, setErrors] = useState<FieldErrors>({})
@@ -95,21 +130,29 @@ export default function SellerDashboardClient() {
   useEffect(() => {
     let active = true
 
-    async function loadProducts() {
+    async function loadDashboard() {
       setIsLoading(true)
       try {
-        const response = await fetch("/api/products", { cache: "no-store" })
+        const response = await fetch("/api/sellers/dashboard", {
+          cache: "no-store",
+        })
         const data = await response.json()
 
         if (!response.ok) throw new Error(data.error)
         if (active) {
           setListings(data.products)
+          setOrders(data.orders)
+          setLowStock(data.lowStock)
+          setDashboardStats(data.stats)
           setStatusMessage("")
         }
       } catch {
         if (active) {
+          setListings([])
+          setOrders([])
+          setLowStock([])
           setStatusMessage(
-            "Using starter listings. Start MongoDB locally to persist seller products."
+            "Dashboard data could not be loaded. Start MongoDB locally to manage seller listings and orders."
           )
         }
       } finally {
@@ -117,7 +160,7 @@ export default function SellerDashboardClient() {
       }
     }
 
-    loadProducts()
+    loadDashboard()
     return () => {
       active = false
     }
@@ -133,25 +176,30 @@ export default function SellerDashboardClient() {
     () => [
       {
         label: "Total revenue",
-        value: "$12,480",
-        hint: "+14% this month",
+        value: `$${dashboardStats.revenue.toFixed(2)}`,
+        hint: `${dashboardStats.unitsSold} units sold`,
         icon: BarChart3,
       },
       {
         label: "Active listings",
-        value: listings.length.toString(),
+        value: dashboardStats.activeListings.toString(),
         hint: "Seller inventory",
         icon: PackagePlus,
       },
       {
         label: "Unfulfilled orders",
-        value: "8",
-        hint: "Ship by Friday",
+        value: dashboardStats.unfulfilledOrders.toString(),
+        hint: `${dashboardStats.orderCount} total orders`,
         icon: Truck,
       },
-      { label: "Shop visits", value: "2.4k", hint: "Last 30 days", icon: Eye },
+      {
+        label: "Low stock",
+        value: dashboardStats.lowStockCount.toString(),
+        hint: "Needs inventory review",
+        icon: Eye,
+      },
     ],
-    [listings.length]
+    [dashboardStats]
   )
 
   const openAddModal = () => {
@@ -249,6 +297,20 @@ export default function SellerDashboardClient() {
 
       if (modalMode === "add") {
         setListings((current) => [data.product, ...current])
+        if (data.product.stock <= 3 || data.product.status === "Low stock") {
+          setLowStock((current) => [data.product, ...current])
+        }
+        setDashboardStats((current) => ({
+          ...current,
+          activeListings:
+            data.product.status === "Active"
+              ? current.activeListings + 1
+              : current.activeListings,
+          lowStockCount:
+            data.product.stock <= 3 || data.product.status === "Low stock"
+              ? current.lowStockCount + 1
+              : current.lowStockCount,
+        }))
         toast.success("Product added", {
           description: "The listing was saved to MongoDB.",
         })
@@ -258,6 +320,14 @@ export default function SellerDashboardClient() {
             item.id === data.product.id ? data.product : item
           )
         )
+        setLowStock((current) => {
+          const withoutUpdated = current.filter(
+            (item) => item.id !== data.product.id
+          )
+          return data.product.stock <= 3 || data.product.status === "Low stock"
+            ? [data.product, ...withoutUpdated]
+            : withoutUpdated
+        })
         toast.success("Product updated", {
           description: "The listing changes were saved to MongoDB.",
         })
@@ -305,11 +375,11 @@ export default function SellerDashboardClient() {
             </div>
             <div>
               <h1 className="text-2xl font-black text-[#063f34]">
-                {featuredSeller.name}
+                {user.studioName ?? user.name}
               </h1>
               <div className="mt-2 flex flex-wrap gap-4 text-sm font-semibold text-[#53615c]">
                 <span className="flex items-center gap-1.5">
-                  <MapPin size={15} /> {featuredSeller.location}
+                  <MapPin size={15} /> {user.location ?? "Studio location"}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Star size={15} className="fill-[#c8651b] text-[#c8651b]" />{" "}
@@ -317,7 +387,8 @@ export default function SellerDashboardClient() {
                 </span>
               </div>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-[#53615c]">
-                {featuredSeller.story}
+                {user.story ??
+                  "Manage listings, orders, inventory, and seller performance from this workspace."}
               </p>
             </div>
           </div>
@@ -363,6 +434,23 @@ export default function SellerDashboardClient() {
         ))}
       </section>
 
+      {lowStock.length > 0 && (
+        <section className="mt-4 rounded-lg border border-[#f1c9a5] bg-[#fff8f1] p-4">
+          <div className="flex items-start gap-3">
+            <Info className="mt-0.5 text-[#9a4d10]" size={20} />
+            <div>
+              <h2 className="font-black text-[#7a3907]">
+                Inventory needs attention
+              </h2>
+              <p className="mt-1 text-sm font-semibold text-[#7a5a40]">
+                {lowStock.length} listing{lowStock.length === 1 ? "" : "s"} are
+                low on stock. Update quantities before they sell out.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {statusMessage && (
         <Alert className="mt-4 border-[#d8dfdc] bg-white text-[#53615c]">
           <Info />
@@ -403,7 +491,7 @@ export default function SellerDashboardClient() {
             <tbody className="divide-y divide-[#d8dfdc]">
               {isLoading ? (
                 <TableSkeleton rows={5} />
-              ) : (
+              ) : listings.length ? (
                 listings.map((product) => (
                   <tr key={product.id} className="hover:bg-[#fbfbf8]">
                     <td className="px-4 py-3">
@@ -452,10 +540,70 @@ export default function SellerDashboardClient() {
                     </td>
                   </tr>
                 ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-4 py-8 text-center text-sm font-semibold text-[#53615c]"
+                  >
+                    No seller listings yet. Add your first product to publish it
+                    to the marketplace.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className="mt-4 rounded-lg border border-[#d8dfdc] bg-white">
+        <div className="border-b border-[#d8dfdc] p-4">
+          <p className="text-xs font-black text-[#9a4d10] uppercase">
+            Seller orders
+          </p>
+          <h2 className="text-2xl font-black text-[#063f34]">Recent orders</h2>
+        </div>
+        {isLoading ? (
+          <div className="p-4">
+            <TableSkeleton rows={3} />
+          </div>
+        ) : orders.length ? (
+          <div className="divide-y divide-[#d8dfdc]">
+            {orders.slice(0, 6).map((order) => (
+              <article
+                key={order.id}
+                className="grid gap-3 p-4 sm:grid-cols-[1fr_auto]"
+              >
+                <div>
+                  <p className="font-black text-[#063f34]">{order.id}</p>
+                  <p className="mt-1 text-sm font-semibold text-[#53615c]">
+                    {order.items
+                      .map((item) => `${item.quantity} x ${item.name}`)
+                      .join(", ")}
+                  </p>
+                </div>
+                <div className="text-left sm:text-right">
+                  <p className="font-black text-[#1b211f]">
+                    $
+                    {order.items
+                      .reduce(
+                        (sum, item) => sum + item.price * item.quantity,
+                        0
+                      )
+                      .toFixed(2)}
+                  </p>
+                  <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-[#edf2ef] px-2 py-1 text-xs font-black text-[#063f34]">
+                    <PackageCheck size={13} /> {order.status}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="p-6 text-sm font-semibold text-[#53615c]">
+            Orders for your seller studio will appear here after checkout.
+          </div>
+        )}
       </section>
 
       <Dialog

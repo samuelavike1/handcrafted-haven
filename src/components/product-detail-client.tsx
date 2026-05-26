@@ -1,9 +1,10 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Heart, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
+import { addCartItem } from "@/lib/cart"
 
 type ProductDetailClientProps = {
   product: {
@@ -12,29 +13,47 @@ type ProductDetailClientProps = {
     image: string
     price: number
     stock: number
+    seller?: string
+    category?: string
+    description?: string
   }
   galleryImages: string[]
+  variant: "gallery" | "actions"
 }
 
 export default function ProductDetailClient({
   product,
   galleryImages,
+  variant,
 }: ProductDetailClientProps) {
   const images = galleryImages.length ? galleryImages : [product.image]
   const [activeImage, setActiveImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [saved, setSaved] = useState(false)
 
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const favorites = JSON.parse(
+        localStorage.getItem("hh-favorites") ?? "[]"
+      ) as string[]
+      setSaved(favorites.includes(product.id))
+    }, 0)
+
+    return () => window.clearTimeout(timeout)
+  }, [product.id])
+
   const addToCart = () => {
-    const cartItem = {
+    addCartItem({
       id: product.id,
       name: product.name,
       image: product.image,
       price: product.price,
+      seller: product.seller,
+      category: product.category,
+      description: product.description,
       quantity,
-    }
+    })
 
-    localStorage.setItem(`hh-cart-${product.id}`, JSON.stringify(cartItem))
     toast.success("Added to cart", {
       description: `${quantity} x ${product.name} is ready for checkout.`,
     })
@@ -57,8 +76,8 @@ export default function ProductDetailClient({
     })
   }
 
-  return (
-    <>
+  if (variant === "gallery") {
+    return (
       <div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#edf2ef]">
           <Image
@@ -94,48 +113,50 @@ export default function ProductDetailClient({
           ))}
         </div>
       </div>
+    )
+  }
 
-      <div className="mt-4 rounded-lg border border-[#d8dfdc] bg-white p-4">
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="flex h-9 w-36 items-center justify-between rounded-lg border border-[#d8dfdc] px-3">
-            <button
-              type="button"
-              onClick={() => setQuantity((value) => Math.max(1, value - 1))}
-              aria-label="Decrease quantity"
-              className="text-[#53615c] hover:text-[#063f34]"
-            >
-              <Minus size={17} />
-            </button>
-            <span className="font-black text-[#063f34]">{quantity}</span>
-            <button
-              type="button"
-              onClick={() =>
-                setQuantity((value) => Math.min(product.stock, value + 1))
-              }
-              aria-label="Increase quantity"
-              className="text-[#53615c] hover:text-[#063f34]"
-            >
-              <Plus size={17} />
-            </button>
-          </div>
+  return (
+    <div className="mt-4 rounded-lg border border-[#d8dfdc] bg-white p-4">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex h-9 w-36 items-center justify-between rounded-lg border border-[#d8dfdc] px-3">
           <button
             type="button"
-            onClick={addToCart}
-            disabled={product.stock <= 0}
-            className="h-9 flex-1 rounded-md bg-[#f28a35] px-4 text-sm font-black text-white transition hover:bg-[#dc7624] disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+            aria-label="Decrease quantity"
+            className="text-[#53615c] hover:text-[#063f34]"
           >
-            Add to cart
+            <Minus size={17} />
+          </button>
+          <span className="font-black text-[#063f34]">{quantity}</span>
+          <button
+            type="button"
+            onClick={() =>
+              setQuantity((value) => Math.min(product.stock, value + 1))
+            }
+            aria-label="Increase quantity"
+            className="text-[#53615c] hover:text-[#063f34]"
+          >
+            <Plus size={17} />
           </button>
         </div>
         <button
           type="button"
-          onClick={toggleFavorite}
-          className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-md border border-[#063f34] text-sm font-black text-[#063f34] transition hover:bg-[#edf2ef]"
+          onClick={addToCart}
+          disabled={product.stock <= 0}
+          className="h-9 flex-1 rounded-md bg-[#f28a35] px-4 text-sm font-black text-white transition hover:bg-[#dc7624] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Heart size={18} fill={saved ? "currentColor" : "none"} />
-          {saved ? "Saved" : "Save to collection"}
+          Add to cart
         </button>
       </div>
-    </>
+      <button
+        type="button"
+        onClick={toggleFavorite}
+        className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-md border border-[#063f34] text-sm font-black text-[#063f34] transition hover:bg-[#edf2ef]"
+      >
+        <Heart size={18} fill={saved ? "currentColor" : "none"} />
+        {saved ? "Saved" : "Save to collection"}
+      </button>
+    </div>
   )
 }

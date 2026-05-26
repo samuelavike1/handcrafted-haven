@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, MapPin, Star } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export interface Product {
   id: string
@@ -32,6 +32,30 @@ export default function ProductCard({
   compact = false,
 }: ProductCardProps) {
   const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const favorites = JSON.parse(
+        localStorage.getItem("hh-favorites") ?? "[]"
+      ) as string[]
+      setSaved(favorites.includes(product.id))
+    }, 0)
+
+    return () => window.clearTimeout(timeout)
+  }, [product.id])
+
+  const toggleSaved = () => {
+    const nextSaved = !saved
+    setSaved(nextSaved)
+    const favorites = JSON.parse(
+      localStorage.getItem("hh-favorites") ?? "[]"
+    ) as string[]
+    const nextFavorites = nextSaved
+      ? Array.from(new Set([...favorites, product.id]))
+      : favorites.filter((id) => id !== product.id)
+
+    localStorage.setItem("hh-favorites", JSON.stringify(nextFavorites))
+  }
 
   return (
     <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_10px_22px_rgba(18,40,33,0.08)]">
@@ -69,7 +93,7 @@ export default function ProductCard({
             </Link>
           </div>
           <button
-            onClick={() => setSaved((value) => !value)}
+            onClick={toggleSaved}
             className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
               saved
                 ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b]"

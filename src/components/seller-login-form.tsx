@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Loader2, Lock, Mail } from "lucide-react"
 
 type LoginErrors = {
@@ -10,6 +11,7 @@ type LoginErrors = {
 }
 
 export default function SellerLoginForm() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [errors, setErrors] = useState<LoginErrors>({})
@@ -35,9 +37,9 @@ export default function SellerLoginForm() {
         throw new Error(data.error ?? "Please review your login details.")
       }
 
-      setMessage(
-        `Welcome back, ${data.seller.studioName}. Redirecting is ready for the auth phase.`
-      )
+      setMessage(`Welcome back, ${data.seller.studioName}. Redirecting...`)
+      router.push("/sell/dashboard")
+      router.refresh()
     } catch (error) {
       setMessage(
         error instanceof Error

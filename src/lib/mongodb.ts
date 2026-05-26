@@ -1,7 +1,12 @@
-import { MongoClient, type Db } from "mongodb"
+import { attachDatabasePool } from "@vercel/functions"
+import { MongoClient, type Db, type MongoClientOptions } from "mongodb"
 
 const uri = process.env.MONGODB_URI ?? "mongodb://127.0.0.1:27017"
 const dbName = process.env.MONGODB_DB ?? "handcrafted_haven"
+const options: MongoClientOptions = {
+  appName: "handcrafted-haven",
+  maxIdleTimeMS: 5000,
+}
 
 type MongoCache = {
   client?: MongoClient
@@ -19,7 +24,9 @@ export async function getMongoClient() {
   if (cache.client) return cache.client
 
   if (!cache.promise) {
-    cache.promise = new MongoClient(uri).connect()
+    const client = new MongoClient(uri, options)
+    attachDatabasePool(client)
+    cache.promise = client.connect()
   }
 
   cache.client = await cache.promise

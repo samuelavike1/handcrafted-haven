@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react"
 import type { ElementType } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Loader2, Mail, MapPin, Store, UserRound } from "lucide-react"
 
 type RegisterForm = {
@@ -26,6 +27,7 @@ const initialForm: RegisterForm = {
 }
 
 export default function SellerRegisterForm() {
+  const router = useRouter()
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState<RegisterErrors>({})
   const [message, setMessage] = useState("")
@@ -55,8 +57,9 @@ export default function SellerRegisterForm() {
         throw new Error(data.error ?? "Please review the form fields.")
       }
 
-      setMessage(`${data.seller.studioName} was registered in MongoDB.`)
-      setForm(initialForm)
+      setMessage(`${data.seller.studioName} was registered. Redirecting...`)
+      router.push("/sell/dashboard")
+      router.refresh()
     } catch (error) {
       setMessage(
         error instanceof Error

@@ -28,7 +28,13 @@ export async function PUT(request: Request, context: RouteContext) {
       )
     }
 
-    const product = await updateProduct(id, parsed.data)
+    const product = await updateProduct(id, parsed.data, user)
+    if (product === "forbidden") {
+      return NextResponse.json(
+        { error: "You can only update products from your seller studio." },
+        { status: 403 }
+      )
+    }
     if (!product) {
       return NextResponse.json({ error: "Product not found." }, { status: 404 })
     }

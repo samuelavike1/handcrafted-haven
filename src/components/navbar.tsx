@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { FormEvent, useEffect, useState } from "react"
 import {
   Bell,
   LayoutDashboard,
@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import appLogo from "../../Logo.jpg"
+import { cartUpdatedEvent, readCart } from "@/lib/cart"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,8 +49,11 @@ const dashboardHref = {
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<CurrentUser | null>(null)
+  const [search, setSearch] = useState("")
+  const [cartCount, setCartCount] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -69,6 +73,28 @@ export default function Navbar() {
       active = false
     }
   }, [pathname])
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      setCartCount(readCart().reduce((sum, item) => sum + item.quantity, 0))
+    }
+
+    updateCartCount()
+    window.addEventListener(cartUpdatedEvent, updateCartCount)
+    window.addEventListener("storage", updateCartCount)
+    return () => {
+      window.removeEventListener(cartUpdatedEvent, updateCartCount)
+      window.removeEventListener("storage", updateCartCount)
+    }
+  }, [])
+
+  const submitSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const query = search.trim()
+    if (!query) return
+    setMobileOpen(false)
+    router.push(`/browse?q=${encodeURIComponent(query)}`)
+  }
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" })
@@ -119,12 +145,17 @@ export default function Navbar() {
           })}
         </nav>
 
-        <div className="relative ml-auto hidden w-[260px] lg:block">
+        <form
+          onSubmit={submitSearch}
+          className="relative ml-auto hidden w-[260px] lg:block"
+        >
           <Search
             className="absolute top-1/2 left-3 -translate-y-1/2 text-[#6d7a75]"
             size={16}
           />
           <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             className="h-9 w-full rounded-md border border-[#d8dfdc] bg-white pr-3 pl-9 text-xs transition outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/10"
             placeholder={
               pathname === "/sell"
@@ -132,7 +163,7 @@ export default function Navbar() {
                 : "Search handmade goods..."
             }
           />
-        </div>
+        </form>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
           <button
@@ -147,7 +178,11 @@ export default function Navbar() {
             aria-label="Cart"
           >
             <ShoppingBag size={18} />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#c8651b]" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#c8651b] px-1 text-[10px] font-black text-white">
+                {cartCount}
+              </span>
+            )}
           </Link>
           <button
             onClick={() =>
@@ -231,16 +266,18 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="border-t border-[#d8dfdc] bg-[#fbfbf8] px-4 py-4 md:hidden">
-          <div className="relative mb-4">
+          <form onSubmit={submitSearch} className="relative mb-4">
             <Search
               className="absolute top-1/2 left-3 -translate-y-1/2 text-[#6d7a75]"
               size={18}
             />
             <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
               className="h-9 w-full rounded-md border border-[#d8dfdc] bg-white pr-3 pl-9 text-sm outline-none"
               placeholder="Search handmade goods..."
             />
-          </div>
+          </form>
           <div className="grid gap-2">
             {navItems.map((item) => (
               <Link

@@ -1,4 +1,4 @@
-import { randomBytes, scryptSync, timingSafeEqual } from "crypto"
+import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from "crypto"
 import type { Db } from "mongodb"
 import { getDb } from "@/lib/mongodb"
 import type {
@@ -27,6 +27,24 @@ type UserDocument = AppUser & {
 export const sessionCookieName = "hh_session"
 const usersCollection = "users"
 const sessionsCollection = "sessions"
+const sessionMaxAgeSeconds = 60 * 60 * 24 * 7
+let indexesReady: Promise<void> | null = null
+
+async function ensureAuthIndexes(db: Db) {
+  indexesReady ??= Promise.all([
+    db
+      .collection<UserDocument>(usersCollection)
+      .createIndex({ email: 1 }, { unique: true }),
+    db
+      .collection(sessionsCollection)
+      .createIndex({ token: 1 }, { unique: true }),
+    db
+      .collection(sessionsCollection)
+      .createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+  ]).then(() => undefined)
+
+  await indexesReady
+}
 
 function hashPassword(
   password: string,
@@ -61,6 +79,7 @@ function publicUser(user: UserDocument): AppUser {
 
 export async function createUser(input: AuthRegistrationInput) {
   const db = await getDb()
+  await ensureAuthIndexes(db)
   const existing = await db
     .collection<UserDocument>(usersCollection)
     .findOne({ email: input.email.toLowerCase() })
@@ -72,7 +91,7 @@ export async function createUser(input: AuthRegistrationInput) {
   const now = new Date().toISOString()
   const { hash, salt } = hashPassword(input.password)
   const user: UserDocument = {
-    id: `${input.role}-${Date.now()}`,
+    id: `${input.role}-${randomUUID()}`,
     name: input.name,
     email: input.email.toLowerCase(),
     role: input.role,
@@ -91,6 +110,7 @@ export async function createUser(input: AuthRegistrationInput) {
 
 export async function loginUser(input: AuthLoginInput) {
   const db = await getDb()
+  await ensureAuthIndexes(db)
   const query: { email: string; role?: UserRole } = {
     email: input.email.toLowerCase(),
   }
@@ -107,10 +127,12 @@ export async function loginUser(input: AuthLoginInput) {
 
   const token = randomBytes(32).toString("hex")
   const now = new Date().toISOString()
+  const expiresAt = new Date(Date.now() + sessionMaxAgeSeconds * 1000)
   await db.collection(sessionsCollection).insertOne({
     token,
     userId: user.id,
     createdAt: now,
+    expiresAt,
   })
 
   return { token, user: publicUser(user) }
@@ -121,6 +143,13 @@ export async function findUserBySessionToken(db: Db, token?: string) {
 
   const session = await db.collection(sessionsCollection).findOne({ token })
   if (!session?.userId) return null
+  if (
+    session.expiresAt &&
+    new Date(session.expiresAt).getTime() <= Date.now()
+  ) {
+    await db.collection(sessionsCollection).deleteOne({ token })
+    return null
+  }
 
   const user = await db
     .collection<UserDocument>(usersCollection)

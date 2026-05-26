@@ -191,16 +191,17 @@ export default function HomePage() {
                   Handpicked pieces with provenance.
                 </h2>
               </div>
-              <div className="relative w-full sm:w-[320px]">
+              <form action="/browse" className="relative w-full sm:w-[320px]">
                 <Search
                   className="absolute top-1/2 left-4 -translate-y-1/2 text-[#6d7a75]"
                   size={18}
                 />
                 <input
+                  name="q"
                   className="h-9 w-full rounded-lg border border-[#d8dfdc] bg-white pr-4 pl-12 text-sm outline-none"
                   placeholder="Search vases, throws, trays..."
                 />
-              </div>
+              </form>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

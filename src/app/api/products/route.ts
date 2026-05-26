@@ -3,9 +3,14 @@ import { createProduct, getProducts } from "@/lib/server-products"
 import { productInputSchema } from "@/lib/schemas"
 import { getCurrentUser, hasRole } from "@/lib/server-auth"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const products = await getProducts()
+    const url = new URL(request.url)
+    const user = await getCurrentUser()
+    const products =
+      url.searchParams.get("mine") === "1" && user?.role === "seller"
+        ? await getProducts({ sellerId: user.id })
+        : await getProducts()
     return NextResponse.json({ products })
   } catch {
     return NextResponse.json(
@@ -35,7 +40,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const product = await createProduct(parsed.data)
+    const product = await createProduct(parsed.data, user)
     return NextResponse.json({ product }, { status: 201 })
   } catch {
     return NextResponse.json(

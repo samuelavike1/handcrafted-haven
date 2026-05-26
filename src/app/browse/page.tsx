@@ -25,7 +25,13 @@ interface BrowsePageProps {
 
 export default async function BrowsePage({ searchParams }: BrowsePageProps) {
   const params = await searchParams
-  const products = await getProducts().catch(() => fallbackProducts)
+  const productResult = await getProducts()
+    .then((items) => ({ products: items, dataNotice: "" }))
+    .catch(() => ({
+      products: fallbackProducts,
+      dataNotice:
+        "Showing starter products because the MongoDB product database is unavailable.",
+    }))
   const initialCategory = params.category
     ? (categoryBySlug[params.category] ?? "All crafts")
     : "All crafts"
@@ -69,9 +75,10 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
         </section>
 
         <ProductCatalogClient
-          products={products}
+          products={productResult.products}
           initialCategory={initialCategory}
           initialQuery={params.q ?? ""}
+          dataNotice={productResult.dataNotice}
         />
       </main>
 

@@ -18,7 +18,15 @@ export default async function SellerDashboardPage() {
       <Navbar />
 
       <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
-        <SellerDashboardClient />
+        <SellerDashboardClient
+          user={{
+            name: user.name,
+            email: user.email,
+            studioName: user.studioName,
+            location: user.location,
+            story: user.story,
+          }}
+        />
       </main>
 
       <Footer />

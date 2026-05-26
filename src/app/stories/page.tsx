@@ -1,6 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
-import { ArrowRight, Clock, Leaf, Users } from "lucide-react"
+import { Clock, Leaf, Users } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Metadata } from "next"
@@ -48,10 +47,7 @@ export default function StoriesPage() {
             </div>
           </div>
 
-          <Link
-            href={`/stories/${featured.id}`}
-            className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white"
-          >
+          <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white">
             <div className="relative h-[240px] overflow-hidden">
               <Image
                 src={featured.image}
@@ -74,11 +70,11 @@ export default function StoriesPage() {
               <p className="mt-4 leading-relaxed text-[#53615c]">
                 {featured.excerpt}
               </p>
-              <p className="mt-5 inline-flex items-center gap-2 font-black text-[#063f34]">
-                Read story <ArrowRight size={18} />
+              <p className="mt-5 text-sm font-bold text-[#53615c]">
+                Full story page coming soon.
               </p>
             </div>
-          </Link>
+          </article>
         </section>
 
         <section className="border-t border-[#d8dfdc] bg-[#f0f3ef] py-6">
@@ -93,9 +89,8 @@ export default function StoriesPage() {
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               {rest.map((story) => (
-                <Link
+                <article
                   key={story.id}
-                  href={`/stories/${story.id}`}
                   className="group grid overflow-hidden rounded-lg border border-[#d8dfdc] bg-white sm:grid-cols-[180px_1fr]"
                 >
                   <div className="relative min-h-[150px] overflow-hidden">
@@ -121,7 +116,7 @@ export default function StoriesPage() {
                       <Clock size={15} /> {story.readTime} · {story.date}
                     </p>
                   </div>
-                </Link>
+                </article>
               ))}
             </div>
           </div>

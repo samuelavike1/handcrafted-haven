@@ -740,10 +740,16 @@ try {
   const db = client.db(dbName)
   const now = new Date().toISOString()
 
+  console.log(`Seeding MongoDB database: ${db.databaseName}`)
+
   await db.collection("sessions").deleteMany({})
   await db.collection("users").deleteMany({})
   await db.collection("products").deleteMany({})
   await db.collection("orders").deleteMany({})
+
+  await db.collection("users").createIndex({ email: 1 }, { unique: true })
+  await db.collection("products").createIndex({ id: 1 }, { unique: true })
+  await db.collection("orders").createIndex({ id: 1 }, { unique: true })
 
   await db.collection("users").insertMany(
     users.map((user) => ({
@@ -776,8 +782,17 @@ try {
     updatedAt: now,
   })
 
+  const [userCount, productCount, orderCount] = await Promise.all([
+    db.collection("users").countDocuments({}),
+    db.collection("products").countDocuments({}),
+    db.collection("orders").countDocuments({}),
+  ])
+
   console.log(
     `Seeded ${users.length} users, ${products.length} products, and 1 order.`
+  )
+  console.log(
+    `Verified counts in ${db.databaseName}: users=${userCount}, products=${productCount}, orders=${orderCount}.`
   )
   console.log("Demo password for all users: Password123!")
   console.log("Buyer: buyer@haven.test")

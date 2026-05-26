@@ -14,6 +14,9 @@ export async function getCurrentUser() {
   return findUserBySessionToken(db, token)
 }
 
-export function hasRole(user: AppUser | null, roles: UserRole[]) {
+export function hasRole(
+  user: AppUser | null,
+  roles: UserRole[]
+): user is AppUser {
   return Boolean(user && roles.includes(user.role))
 }
