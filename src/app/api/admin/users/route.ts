@@ -1,7 +1,27 @@
 import { NextResponse } from "next/server"
-import { createUser } from "@/lib/auth"
+import { createUser, getUsers } from "@/lib/auth"
 import { getCurrentUser, hasRole } from "@/lib/server-auth"
 import { adminCreateSchema } from "@/lib/schemas"
+
+export async function GET() {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!hasRole(currentUser, ["admin"])) {
+      return NextResponse.json(
+        { error: "Admin access is required." },
+        { status: 401 }
+      )
+    }
+
+    const users = await getUsers()
+    return NextResponse.json({ users })
+  } catch {
+    return NextResponse.json(
+      { error: "Users could not be loaded." },
+      { status: 500 }
+    )
+  }
+}
 
 export async function POST(request: Request) {
   try {
