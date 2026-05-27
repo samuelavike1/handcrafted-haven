@@ -16,7 +16,7 @@ export default function StoriesPage() {
   const [featured, ...rest] = storyPosts
 
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
+    <div className="min-h-screen bg-hh-canvas">
       <Navbar />
 
       <main>
@@ -25,23 +25,23 @@ export default function StoriesPage() {
             <p className="text-xs font-black text-[#9a4d10] uppercase">
               Community journal
             </p>
-            <h1 className="mt-3 text-2xl font-black tracking-tight text-[#063f34] sm:text-2xl">
+            <h1 className="mt-3 text-2xl font-black tracking-tight text-hh-heading sm:text-2xl">
               The people behind the pieces.
             </h1>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-[#53615c]">
+            <p className="mt-4 max-w-xl text-sm leading-6 text-hh-muted">
               Read maker profiles, material guides, sustainability notes, and
               collector stories from the Handcrafted Haven community.
             </p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-lg border border-[#d8dfdc] bg-white p-4">
-                <Users className="text-[#063f34]" />
-                <p className="mt-4 font-black text-[#063f34]">
+              <div className="rounded-lg border border-hh-border bg-hh-card p-4">
+                <Users className="text-hh-heading" />
+                <p className="mt-4 font-black text-hh-heading">
                   Human-first commerce
                 </p>
               </div>
-              <div className="rounded-lg border border-[#d8dfdc] bg-white p-4">
-                <Leaf className="text-[#063f34]" />
-                <p className="mt-4 font-black text-[#063f34]">
+              <div className="rounded-lg border border-hh-border bg-hh-card p-4">
+                <Leaf className="text-hh-heading" />
+                <p className="mt-4 font-black text-hh-heading">
                   Sustainable practices
                 </p>
               </div>
@@ -50,7 +50,7 @@ export default function StoriesPage() {
 
           <Link
             href={`/stories/${featured.id}`}
-            className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white"
+            className="group overflow-hidden rounded-lg border border-hh-border bg-hh-card"
           >
             <div className="relative h-[240px] overflow-hidden">
               <Image
@@ -60,7 +60,7 @@ export default function StoriesPage() {
                 className="object-cover transition duration-700 group-hover:scale-105"
                 unoptimized
               />
-              <div className="absolute top-4 left-4 rounded-md bg-white px-3 py-2 text-[11px] font-black text-[#9a4d10] uppercase">
+              <div className="absolute top-4 left-4 rounded-md bg-hh-card px-3 py-2 text-[11px] font-black text-[#9a4d10] uppercase">
                 Featured
               </div>
             </div>
@@ -68,26 +68,26 @@ export default function StoriesPage() {
               <p className="text-[11px] font-black text-[#9a4d10] uppercase">
                 {featured.category}
               </p>
-              <h2 className="mt-3 text-2xl leading-tight font-black text-[#063f34]">
+              <h2 className="mt-3 text-2xl leading-tight font-black text-hh-heading">
                 {featured.title}
               </h2>
-              <p className="mt-4 leading-relaxed text-[#53615c]">
+              <p className="mt-4 leading-relaxed text-hh-muted">
                 {featured.excerpt}
               </p>
-              <p className="mt-5 inline-flex items-center gap-2 font-black text-[#063f34]">
+              <p className="mt-5 inline-flex items-center gap-2 font-black text-hh-heading">
                 Read story <ArrowRight size={18} />
               </p>
             </div>
           </Link>
         </section>
 
-        <section className="border-t border-[#d8dfdc] bg-[#f0f3ef] py-6">
+        <section className="border-t border-hh-border bg-hh-surface py-6">
           <div className="mx-auto max-w-[1080px] px-4 sm:px-5 lg:px-6">
             <div className="mb-5">
               <p className="text-xs font-black text-[#9a4d10] uppercase">
                 Latest stories
               </p>
-              <h2 className="mt-2 text-2xl font-black text-[#063f34]">
+              <h2 className="mt-2 text-2xl font-black text-hh-heading">
                 Craft, care, and community.
               </h2>
             </div>
@@ -96,7 +96,7 @@ export default function StoriesPage() {
                 <Link
                   key={story.id}
                   href={`/stories/${story.id}`}
-                  className="group grid overflow-hidden rounded-lg border border-[#d8dfdc] bg-white sm:grid-cols-[180px_1fr]"
+                  className="group grid overflow-hidden rounded-lg border border-hh-border bg-hh-card sm:grid-cols-[180px_1fr]"
                 >
                   <div className="relative min-h-[150px] overflow-hidden">
                     <Image
@@ -111,13 +111,13 @@ export default function StoriesPage() {
                     <p className="text-[11px] font-black text-[#9a4d10] uppercase">
                       {story.category}
                     </p>
-                    <h3 className="mt-3 text-lg leading-tight font-black text-[#063f34]">
+                    <h3 className="mt-3 text-lg leading-tight font-black text-hh-heading">
                       {story.title}
                     </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-[#53615c]">
+                    <p className="mt-3 text-sm leading-relaxed text-hh-muted">
                       {story.excerpt}
                     </p>
-                    <p className="mt-5 flex items-center gap-2 text-sm font-bold text-[#53615c]">
+                    <p className="mt-5 flex items-center gap-2 text-sm font-bold text-hh-muted">
                       <Clock size={15} /> {story.readTime} · {story.date}
                     </p>
                   </div>

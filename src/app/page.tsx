@@ -24,7 +24,7 @@ const featuredProducts = products.slice(0, 4)
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
+    <div className="min-h-screen bg-hh-canvas">
       <Navbar />
 
       <main>
@@ -139,13 +139,13 @@ export default function HomePage() {
               <p className="text-xs font-black text-[#9a4d10] uppercase">
                 Shop by craft
               </p>
-              <h2 className="mt-2 text-2xl font-black tracking-tight text-[#063f34]">
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-hh-heading">
                 Find the right kind of handmade.
               </h2>
             </div>
             <Link
               href="/browse"
-              className="inline-flex items-center font-black text-[#063f34]"
+              className="inline-flex items-center font-black text-hh-heading"
             >
               Browse all categories <ArrowRight className="ml-2" size={18} />
             </Link>
@@ -180,24 +180,24 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-[#f0f3ef] py-6">
+        <section className="bg-hh-surface py-6">
           <div className="mx-auto max-w-[1080px] px-4 sm:px-5 lg:px-6">
             <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <p className="text-xs font-black text-[#9a4d10] uppercase">
                   Collector favorites
                 </p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight text-[#063f34]">
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-hh-heading">
                   Handpicked pieces with provenance.
                 </h2>
               </div>
               <div className="relative w-full sm:w-[320px]">
                 <Search
-                  className="absolute top-1/2 left-4 -translate-y-1/2 text-[#6d7a75]"
+                  className="absolute top-1/2 left-4 -translate-y-1/2 text-hh-muted"
                   size={18}
                 />
                 <input
-                  className="h-9 w-full rounded-lg border border-[#d8dfdc] bg-white pr-4 pl-12 text-sm outline-none"
+                  className="h-9 w-full rounded-lg border border-hh-border bg-hh-card pr-4 pl-12 text-sm outline-none"
                   placeholder="Search vases, throws, trays..."
                 />
               </div>
@@ -250,10 +250,10 @@ export default function HomePage() {
             <p className="text-xs font-black text-[#9a4d10] uppercase">
               Seller profiles
             </p>
-            <h2 className="mt-2 max-w-2xl text-2xl font-black tracking-tight text-[#063f34]">
+            <h2 className="mt-2 max-w-2xl text-2xl font-black tracking-tight text-hh-heading">
               Give artisans a studio, not just a storefront.
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#53615c]">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-hh-muted">
               Sellers can tell their story, publish detailed product listings,
               build trust through reviews, and connect with customers who care
               about materials, origin, and process.
@@ -266,10 +266,10 @@ export default function HomePage() {
               ].map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-lg border border-[#d8dfdc] bg-white p-4"
+                  className="rounded-lg border border-hh-border bg-hh-card p-4"
                 >
-                  <item.icon className="text-[#063f34]" />
-                  <p className="mt-4 font-black text-[#063f34]">{item.label}</p>
+                  <item.icon className="text-hh-heading" />
+                  <p className="mt-4 font-black text-hh-heading">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -282,20 +282,20 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="border-t border-[#d8dfdc] bg-white py-6">
+        <section className="border-t border-hh-border bg-hh-card py-6">
           <div className="mx-auto max-w-[1080px] px-4 sm:px-5 lg:px-6">
             <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
                 <p className="text-xs font-black text-[#9a4d10] uppercase">
                   Community journal
                 </p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight text-[#063f34]">
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-hh-heading">
                   Stories behind the work.
                 </h2>
               </div>
               <Link
                 href="/stories"
-                className="inline-flex items-center font-black text-[#063f34]"
+                className="inline-flex items-center font-black text-hh-heading"
               >
                 Read all stories <ArrowRight className="ml-2" size={18} />
               </Link>
@@ -305,7 +305,7 @@ export default function HomePage() {
                 <Link
                   key={story.id}
                   href={`/stories/${story.id}`}
-                  className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#fbfbf8]"
+                  className="group overflow-hidden rounded-lg border border-hh-border bg-hh-canvas"
                 >
                   <div className="relative h-36 overflow-hidden">
                     <Image
@@ -320,13 +320,13 @@ export default function HomePage() {
                     <p className="text-[11px] font-black text-[#9a4d10] uppercase">
                       {story.category}
                     </p>
-                    <h3 className="mt-3 text-lg leading-tight font-black text-[#063f34]">
+                    <h3 className="mt-3 text-lg leading-tight font-black text-hh-heading">
                       {story.title}
                     </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-[#53615c]">
+                    <p className="mt-3 text-sm leading-relaxed text-hh-muted">
                       {story.excerpt}
                     </p>
-                    <p className="mt-5 text-sm font-semibold text-[#53615c]">
+                    <p className="mt-5 text-sm font-semibold text-hh-muted">
                       {story.readTime} · {story.date}
                     </p>
                   </div>

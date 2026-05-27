@@ -34,10 +34,10 @@ export default function ProductCard({
   const [saved, setSaved] = useState(false)
 
   return (
-    <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_10px_22px_rgba(18,40,33,0.08)]">
+    <article className="group overflow-hidden rounded-lg border border-hh-border bg-hh-card transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_10px_22px_rgba(18,40,33,0.08)]">
       <Link href={`/product/${product.id}`} className="block">
         <div
-          className={`relative overflow-hidden bg-[#edf2ef] ${compact ? "aspect-[4/2.8]" : "aspect-[4/2.45]"}`}
+          className={`relative overflow-hidden bg-hh-subtle ${compact ? "aspect-[4/2.8]" : "aspect-[4/2.45]"}`}
         >
           <Image
             src={product.image}
@@ -63,7 +63,7 @@ export default function ProductCard({
               {product.category}
             </p>
             <Link href={`/product/${product.id}`}>
-              <h3 className="text-sm leading-snug font-bold text-[#063f34] transition group-hover:text-[#0b5b4a]">
+              <h3 className="text-sm leading-snug font-bold text-hh-heading transition group-hover:text-[#0b5b4a]">
                 {product.name}
               </h3>
             </Link>
@@ -72,8 +72,8 @@ export default function ProductCard({
             onClick={() => setSaved((value) => !value)}
             className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
               saved
-                ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b]"
-                : "border-[#d8dfdc] bg-white text-[#53615c] hover:border-[#c8651b] hover:text-[#c8651b]"
+                ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b] dark:bg-[#2a1800]"
+                : "border-hh-border bg-hh-card text-hh-muted hover:border-[#c8651b] hover:text-[#c8651b]"
             }`}
             aria-label={saved ? "Remove from collection" : "Save to collection"}
           >
@@ -81,10 +81,10 @@ export default function ProductCard({
           </button>
         </div>
 
-        <div className="mb-2 space-y-0.5 text-xs text-[#53615c]">
+        <div className="mb-2 space-y-0.5 text-xs text-hh-muted">
           <p>
             by{" "}
-            <span className="font-semibold text-[#25332e]">
+            <span className="font-semibold text-hh-body">
               {product.seller}
             </span>
           </p>
@@ -100,7 +100,7 @@ export default function ProductCard({
             {product.materials.slice(0, 1).map((material) => (
               <span
                 key={material}
-                className="rounded-md bg-[#edf2ef] px-2 py-0.5 text-[11px] font-semibold text-[#355148]"
+                className="rounded-md bg-hh-subtle px-2 py-0.5 text-[11px] font-semibold text-hh-heading"
               >
                 {material}
               </span>
@@ -110,12 +110,12 @@ export default function ProductCard({
 
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-lg font-black tracking-tight text-[#1b211f]">
+            <p className="text-lg font-black tracking-tight text-hh-body">
               ${product.price.toFixed(2)}
             </p>
-            <p className="flex items-center gap-1 text-xs text-[#53615c]">
+            <p className="flex items-center gap-1 text-xs text-hh-muted">
               <Star size={13} className="fill-[#c8651b] text-[#c8651b]" />
-              <span className="font-semibold text-[#1b211f]">
+              <span className="font-semibold text-hh-body">
                 {product.rating}
               </span>
               {product.reviews ? <span>({product.reviews})</span> : null}

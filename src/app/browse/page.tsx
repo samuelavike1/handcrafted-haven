@@ -55,10 +55,10 @@ export default function BrowsePage() {
 
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 space-y-6 rounded-lg border border-[#d8dfdc] bg-white p-4">
+            <div className="sticky top-24 space-y-6 rounded-lg border border-hh-border bg-hh-card p-4">
               <div className="flex items-center justify-between">
-                <h2 className="font-black text-[#063f34]">Refine</h2>
-                <SlidersHorizontal size={18} className="text-[#53615c]" />
+                <h2 className="font-black text-hh-heading">Refine</h2>
+                <SlidersHorizontal size={18} className="text-hh-muted" />
               </div>
 
               <div>
@@ -69,15 +69,15 @@ export default function BrowsePage() {
                   {categories.map((category, index) => (
                     <label
                       key={category.slug}
-                      className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 hover:bg-[#edf2ef]"
+                      className="flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 hover:bg-hh-subtle"
                     >
-                      <span className="flex items-center gap-3 text-sm font-semibold text-[#25332e]">
+                      <span className="flex items-center gap-3 text-sm font-semibold text-hh-body">
                         <span
-                          className={`h-4 w-4 rounded border ${index === 0 ? "border-[#063f34] bg-[#063f34]" : "border-[#cfd9d4]"}`}
+                          className={`h-4 w-4 rounded border ${index === 0 ? "border-[#063f34] bg-[#063f34]" : "border-hh-border"}`}
                         />
                         {category.name}
                       </span>
-                      <span className="text-xs text-[#6d7a75]">
+                      <span className="text-xs text-hh-muted">
                         {category.count.split(" ")[0]}
                       </span>
                     </label>
@@ -93,7 +93,7 @@ export default function BrowsePage() {
                   {priceRanges.map((range) => (
                     <button
                       key={range}
-                      className="rounded-lg border border-[#d8dfdc] px-3 py-2 text-left text-sm font-semibold text-[#53615c] hover:border-[#063f34] hover:text-[#063f34]"
+                      className="rounded-lg border border-hh-border px-3 py-2 text-left text-sm font-semibold text-hh-muted hover:border-[#063f34] hover:text-hh-heading"
                     >
                       {range}
                     </button>
@@ -109,7 +109,7 @@ export default function BrowsePage() {
                   {values.map((value) => (
                     <span
                       key={value}
-                      className="rounded-md bg-[#edf2ef] px-2.5 py-1.5 text-xs font-bold text-[#355148]"
+                      className="rounded-md bg-hh-subtle px-2.5 py-1.5 text-xs font-bold text-hh-heading"
                     >
                       {value}
                     </span>
@@ -120,20 +120,20 @@ export default function BrowsePage() {
           </aside>
 
           <section>
-            <div className="mb-5 flex flex-col gap-4 rounded-lg border border-[#d8dfdc] bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-5 flex flex-col gap-4 rounded-lg border border-hh-border bg-hh-card p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-semibold text-[#53615c]">
+                <p className="text-sm font-semibold text-hh-muted">
                   Showing {products.length} curated products
                 </p>
-                <h2 className="text-lg font-black text-[#063f34]">
+                <h2 className="text-lg font-black text-hh-heading">
                   Artisanal collections
                 </h2>
               </div>
               <div className="flex gap-3">
-                <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#d8dfdc] px-4 text-sm font-bold text-[#063f34] lg:hidden">
+                <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-hh-border px-4 text-sm font-bold text-hh-heading lg:hidden">
                   <SlidersHorizontal size={16} /> Filters
                 </button>
-                <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#d8dfdc] px-4 text-sm font-bold text-[#063f34]">
+                <button className="inline-flex h-9 items-center gap-2 rounded-lg border border-hh-border px-4 text-sm font-bold text-hh-heading">
                   Newest first <ChevronDown size={16} />
                 </button>
               </div>

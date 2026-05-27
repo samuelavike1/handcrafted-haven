@@ -40,7 +40,7 @@ export default function RootLayout({
     >
       <body
         className={cn(
-          "bg-[#f8f9f9] text-[#191c1c] antialiased",
+          "bg-hh-canvas text-hh-body antialiased",
           plusJakarta.className
         )}
       >

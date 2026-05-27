@@ -36,7 +36,7 @@ export default function CartPage() {
   const total = subtotal + shipping + tax
 
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
+    <div className="min-h-screen bg-hh-canvas">
       <Navbar />
 
       <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
@@ -51,7 +51,7 @@ export default function CartPage() {
           </div>
           <Link
             href="/browse"
-            className="inline-flex items-center font-black text-[#063f34]"
+            className="inline-flex items-center font-black text-hh-heading"
           >
             <ArrowLeft className="mr-2" size={18} /> Continue browsing
           </Link>
@@ -62,9 +62,9 @@ export default function CartPage() {
             {items.map((item) => (
               <article
                 key={item.id}
-                className="grid gap-4 rounded-lg border border-[#d8dfdc] bg-white p-4 sm:grid-cols-[104px_1fr_auto]"
+                className="grid gap-4 rounded-lg border border-hh-border bg-hh-card p-4 sm:grid-cols-[104px_1fr_auto]"
               >
-                <div className="relative aspect-square overflow-hidden rounded-lg bg-[#edf2ef]">
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-hh-subtle">
                   <Image
                     src={item.image}
                     alt={item.name}
@@ -77,19 +77,19 @@ export default function CartPage() {
                   <p className="text-[11px] font-black text-[#9a4d10] uppercase">
                     {item.category}
                   </p>
-                  <h2 className="mt-1 text-lg font-black text-[#063f34]">
+                  <h2 className="mt-1 text-lg font-black text-hh-heading">
                     {item.name}
                   </h2>
-                  <p className="mt-2 text-sm text-[#53615c]">
+                  <p className="mt-2 text-sm text-hh-muted">
                     by <span className="font-bold">{item.seller}</span>
                   </p>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-[#53615c]">
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-hh-muted">
                     {item.description}
                   </p>
                 </div>
                 <div className="flex flex-row items-center justify-between gap-4 sm:flex-col sm:items-end">
                   <p className="text-lg font-black">${item.price.toFixed(2)}</p>
-                  <div className="flex h-9 items-center rounded-lg border border-[#d8dfdc]">
+                  <div className="flex h-9 items-center rounded-lg border border-hh-border">
                     <button
                       className="px-3"
                       onClick={() => updateQty(item.id, -1)}
@@ -123,30 +123,30 @@ export default function CartPage() {
             ))}
           </section>
 
-          <aside className="h-fit rounded-lg border border-[#d8dfdc] bg-white p-4 shadow-[0_12px_28px_rgba(18,40,33,0.08)] lg:sticky lg:top-24">
-            <h2 className="text-lg font-black text-[#063f34]">Order summary</h2>
-            <div className="mt-4 space-y-4 text-[#53615c]">
+          <aside className="h-fit rounded-lg border border-hh-border bg-hh-card p-4 shadow-[0_12px_28px_rgba(18,40,33,0.08)] lg:sticky lg:top-24">
+            <h2 className="text-lg font-black text-hh-heading">Order summary</h2>
+            <div className="mt-4 space-y-4 text-hh-muted">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <strong className="text-[#1b211f]">
+                <strong className="text-hh-body">
                   ${subtotal.toFixed(2)}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <strong className="text-[#1b211f]">
+                <strong className="text-hh-body">
                   {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
                 </strong>
               </div>
               <div className="flex justify-between">
                 <span>Estimated tax</span>
-                <strong className="text-[#1b211f]">${tax.toFixed(2)}</strong>
+                <strong className="text-hh-body">${tax.toFixed(2)}</strong>
               </div>
             </div>
-            <div className="mt-4 border-t border-[#d8dfdc] pt-4">
+            <div className="mt-4 border-t border-hh-border pt-4">
               <div className="flex items-end justify-between">
-                <span className="text-lg font-black text-[#063f34]">Total</span>
-                <span className="text-2xl font-black text-[#063f34]">
+                <span className="text-lg font-black text-hh-heading">Total</span>
+                <span className="text-2xl font-black text-hh-heading">
                   ${total.toFixed(2)}
                 </span>
               </div>
@@ -157,7 +157,7 @@ export default function CartPage() {
             >
               Secure checkout <Lock className="ml-2" size={18} />
             </Link>
-            <div className="mt-4 grid gap-3 text-sm font-semibold text-[#53615c]">
+            <div className="mt-4 grid gap-3 text-sm font-semibold text-hh-muted">
               <span className="flex items-center gap-2">
                 <ShieldCheck size={17} className="text-[#063f34]" /> Encrypted
                 payments
