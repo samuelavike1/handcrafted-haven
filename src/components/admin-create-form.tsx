@@ -1,9 +1,10 @@
 "use client"
 
 import { FormEvent, useState } from "react"
-import { AlertCircle, Loader2, Lock, Mail, UserRound } from "lucide-react"
+import { AlertCircle, Loader2, Lock, Mail, UserRound, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import type { AppUser } from "@/lib/auth"
 
 type FormState = {
   name: string
@@ -19,7 +20,11 @@ const initialForm: FormState = {
   password: "",
 }
 
-export default function AdminCreateForm() {
+export default function AdminCreateForm({
+  onCreated,
+}: {
+  onCreated?: (user: AppUser) => void
+}) {
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState<FormErrors>({})
   const [message, setMessage] = useState("")
@@ -52,6 +57,7 @@ export default function AdminCreateForm() {
       toast.success("Admin account created", {
         description: `${data.user.email} can now sign in from /admin.`,
       })
+      onCreated?.(data.user)
       setForm(initialForm)
     } catch (error) {
       setMessage(
@@ -71,22 +77,18 @@ export default function AdminCreateForm() {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="rounded-lg border border-[#d8dfdc] bg-white p-4"
-      noValidate
-    >
-      <p className="text-xs font-black text-[#9a4d10] uppercase">
-        Admin management
-      </p>
-      <h2 className="mt-2 text-lg font-black text-[#063f34]">
-        Create admin account
-      </h2>
-      <p className="mt-1 text-sm leading-6 text-[#53615c]">
-        Only signed-in admins can create another admin account.
-      </p>
+    <form onSubmit={submit} noValidate className="space-y-5">
+      {/* Requirements notice */}
+      <div className="flex items-start gap-3 rounded-xl border border-[#c6ead9] bg-[#f4fdf8] p-3.5">
+        <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[#0b5345]" />
+        <p className="text-xs font-semibold leading-relaxed text-[#1a5c3a]">
+          Only signed-in admins can create another admin account. The new user
+          will be able to sign in immediately at <span className="font-black">/admin</span>.
+        </p>
+      </div>
 
-      <div className="mt-4 grid gap-4 md:grid-cols-3">
+      {/* Fields grid */}
+      <div className="grid gap-4 md:grid-cols-3">
         <AdminInput
           label="Full name"
           value={form.name}
@@ -96,7 +98,7 @@ export default function AdminCreateForm() {
           onChange={(value) => updateField("name", value)}
         />
         <AdminInput
-          label="Email"
+          label="Email address"
           value={form.email}
           error={errors.email?.[0]}
           icon={Mail}
@@ -115,25 +117,33 @@ export default function AdminCreateForm() {
         />
       </div>
 
+      {/* Error message */}
       {message && (
         <Alert
           variant="destructive"
-          className="mt-4 border-[#f0b8b8] bg-[#fff7f7] text-[#7a1d1d]"
+          className="border-[#f0b8b8] bg-[#fff7f7] text-[#7a1d1d] rounded-xl"
         >
-          <AlertCircle />
-          <AlertTitle>Admin account issue</AlertTitle>
-          <AlertDescription>{message}</AlertDescription>
+          <AlertCircle size={16} />
+          <AlertTitle className="font-black">Account creation failed</AlertTitle>
+          <AlertDescription className="font-medium">{message}</AlertDescription>
         </Alert>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="mt-4 inline-flex h-10 items-center justify-center rounded-lg bg-[#063f34] px-4 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-70"
-      >
-        {isSubmitting && <Loader2 className="mr-2 animate-spin" size={16} />}
-        Create admin
-      </button>
+      {/* Submit */}
+      <div className="flex items-center justify-end">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#063f34] px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#075144] focus:ring-4 focus:ring-[#063f34]/15 focus:outline-none disabled:cursor-not-allowed disabled:opacity-70"
+        >
+          {isSubmitting ? (
+            <Loader2 className="animate-spin" size={16} />
+          ) : (
+            <UserRound size={15} />
+          )}
+          {isSubmitting ? "Creating…" : "Create admin account"}
+        </button>
+      </div>
     </form>
   )
 }
@@ -156,25 +166,30 @@ function AdminInput({
   type?: string
 }) {
   return (
-    <label>
-      <span className="mb-1.5 block text-sm font-bold text-[#53615c]">
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[#53615c]">
         {label}
       </span>
       <span className="relative block">
         <Icon
-          className="absolute top-1/2 left-3 -translate-y-1/2 text-[#6d7a75]"
-          size={16}
+          className="absolute top-1/2 left-3 -translate-y-1/2 text-[#9aada8]"
+          size={15}
         />
         <input
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className={`h-10 w-full rounded-lg border bg-[#fbfbf8] pr-3 pl-9 text-sm outline-none focus:border-[#063f34] ${error ? "border-[#ba1a1a]" : "border-[#d8dfdc]"}`}
+          className={`h-10 w-full rounded-md border bg-white pr-3 pl-9 text-sm font-medium outline-none transition-all placeholder:text-[#bfc9c4] focus:ring-4 ${
+            error
+              ? "border-[#ba1a1a] focus:border-[#ba1a1a] focus:ring-[#ba1a1a]/10"
+              : "border-[#d8dfdc] focus:border-[#063f34] focus:ring-[#063f34]/8"
+          }`}
           placeholder={placeholder}
         />
       </span>
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-[#ba1a1a]">
+        <span className="mt-1.5 flex items-center gap-1 text-xs font-semibold text-[#ba1a1a]">
+          <AlertCircle size={11} />
           {error}
         </span>
       )}

@@ -1,10 +1,9 @@
 import Link from "next/link"
-import { ShieldCheck, Store, Users } from "lucide-react"
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
+import { ShieldCheck, ArrowLeft } from "lucide-react"
 import { getCurrentUser, hasRole } from "@/lib/server-auth"
 import AuthForm from "@/components/auth-form"
-import AdminCreateForm from "@/components/admin-create-form"
+import AdminWorkspaceClient from "@/components/admin-workspace-client"
+import { getAdminWorkspaceData } from "@/lib/server-admin"
 
 export const metadata = {
   title: "Admin | Handcrafted Haven",
@@ -14,75 +13,134 @@ export const metadata = {
 export default async function AdminPage() {
   const user = await getCurrentUser()
   const isAdmin = hasRole(user, ["admin"])
+  const workspaceData = isAdmin ? await getAdminWorkspaceData(user) : null
+
+  if (isAdmin && workspaceData) {
+    return (
+      <AdminWorkspaceClient
+        currentUserId={user.id}
+        initialUsers={workspaceData.users}
+        initialProducts={workspaceData.products}
+        initialOrders={workspaceData.orders}
+        initialStats={workspaceData.stats}
+      />
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
-      <Navbar />
-      {isAdmin ? (
-        <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
-          <section className="rounded-lg border border-[#d8dfdc] bg-[#063f34] p-5 text-white">
-            <p className="text-xs font-black text-[#f7b071] uppercase">
-              Admin workspace
-            </p>
-            <h1 className="mt-2 text-2xl font-black">Marketplace operations</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/75">
-              Review marketplace health, seller activity, buyer accounts, and
-              moderation tasks.
-            </p>
-          </section>
+    <div className="relative min-h-screen bg-gradient-to-br from-[#062f28] via-[#0a4438] to-[#062f28]">
+      {/* Decorative background pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
+          backgroundSize: "32px 32px",
+        }}
+      />
 
-          <section className="mt-4 grid gap-4 md:grid-cols-3">
-            {[
-              { icon: Users, label: "Users", value: "Seeded accounts" },
-              { icon: Store, label: "Sellers", value: "Studios active" },
-              { icon: ShieldCheck, label: "Moderation", value: "Ready" },
-            ].map(({ icon: Icon, label, value }) => (
-              <article
-                key={label}
-                className="rounded-lg border border-[#d8dfdc] bg-white p-4"
-              >
-                <Icon className="text-[#063f34]" size={22} />
-                <p className="mt-4 text-xs font-black text-[#9a4d10] uppercase">
-                  {label}
+      <div className="relative flex min-h-screen flex-col">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-6 pt-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-white/60 transition-colors hover:text-white/90"
+          >
+            <ArrowLeft size={15} />
+            Back to site
+          </Link>
+          <Link
+            href="/login"
+            className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold text-white/80 transition-colors hover:bg-white/15 hover:text-white backdrop-blur-sm"
+          >
+            Buyer sign in
+          </Link>
+        </div>
+
+        {/* Main content */}
+        <div className="flex flex-1 items-center justify-center px-4 py-10">
+          <div className="mx-auto w-full max-w-[1040px]">
+            <div className="grid gap-8 lg:grid-cols-[1fr_480px] lg:items-center">
+
+              {/* Left — Branding */}
+              <div className="text-white">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f7b071]/20 backdrop-blur-sm border border-[#f7b071]/30">
+                    <ShieldCheck size={24} className="text-[#f7b071]" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-black tracking-widest text-[#f7b071] uppercase">
+                      Handcrafted Haven
+                    </p>
+                    <p className="text-sm font-semibold text-white/60">
+                      Admin Console
+                    </p>
+                  </div>
+                </div>
+
+                <h1 className="text-4xl font-black leading-tight tracking-tight text-white lg:text-5xl">
+                  Manage your
+                  <br />
+                  <span className="text-[#f7b071]">marketplace.</span>
+                </h1>
+
+                <p className="mt-5 max-w-sm text-base leading-7 text-white/60">
+                  Sign in to access the admin workspace — orders, products,
+                  users, and platform controls all in one place.
                 </p>
-                <p className="mt-2 text-lg font-black text-[#063f34]">
-                  {value}
+
+                <div className="mt-8 grid grid-cols-3 gap-4">
+                  {[
+                    { label: "Orders", icon: "📦" },
+                    { label: "Products", icon: "🛍️" },
+                    { label: "Users", icon: "👥" },
+                  ].map(({ label, icon }) => (
+                    <div
+                      key={label}
+                      className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm"
+                    >
+                      <p className="text-lg">{icon}</p>
+                      <p className="mt-1 text-xs font-bold text-white/60 uppercase tracking-wide">
+                        {label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="mt-6 text-xs text-white/35">
+                  Admin accounts are restricted. A signed-in admin must create
+                  new admin access from the workspace.
                 </p>
-              </article>
-            ))}
-          </section>
+              </div>
 
-          <section className="mt-4">
-            <AdminCreateForm />
-          </section>
-        </main>
-      ) : (
-        <main className="mx-auto grid max-w-[1080px] gap-6 px-4 py-8 sm:px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-6">
-          <section className="flex flex-col justify-center">
-            <p className="text-xs font-black text-[#9a4d10] uppercase">
-              Admin access
-            </p>
-            <h1 className="mt-2 max-w-xl text-3xl font-black tracking-tight text-[#063f34]">
-              Sign in to manage the marketplace.
-            </h1>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-[#53615c]">
-              Admin accounts cannot be created publicly. A signed-in admin must
-              create new admin access from this workspace.
-            </p>
-            <Link
-              href="/login"
-              className="mt-5 inline-flex w-fit rounded-lg border border-[#063f34] px-4 py-2 text-sm font-black text-[#063f34]"
-            >
-              Buyer sign in
-            </Link>
-          </section>
+              {/* Right — Login form */}
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-1 backdrop-blur-xl shadow-2xl shadow-black/30">
+                <div className="rounded-xl bg-white p-6">
+                  <p className="text-xs font-black tracking-widest text-[#9a4d10] uppercase">
+                    Admin sign in
+                  </p>
+                  <h2 className="mt-1.5 text-xl font-black text-[#063f34]">
+                    Welcome back
+                  </h2>
+                  <p className="mt-1 text-sm text-[#53615c]">
+                    Enter your admin credentials below.
+                  </p>
+                  <div className="mt-5">
+                    <AuthForm mode="login" defaultRole="admin" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <section className="rounded-lg border border-[#d8dfdc] bg-white p-5 shadow-[0_12px_28px_rgba(18,40,33,0.08)]">
-            <AuthForm mode="login" defaultRole="admin" />
-          </section>
-        </main>
-      )}
-      <Footer />
+        {/* Footer */}
+        <div className="px-6 pb-6 text-center">
+          <p className="text-xs text-white/30">
+            © {new Date().getFullYear()} Handcrafted Haven · Restricted access
+          </p>
+        </div>
+      </div>
     </div>
   )
 }

@@ -169,3 +169,30 @@ export async function getSellerAnalytics(user: AppUser) {
     },
   }
 }
+
+export async function updateOrderStatus(
+  id: string,
+  status: OrderDocument["status"]
+) {
+  const db = await getDb()
+  const updatedAt = new Date().toISOString()
+
+  await db
+    .collection<OrderDocument>(collectionName)
+    .updateOne({ id }, { $set: { status, updatedAt } })
+
+  return db
+    .collection<OrderDocument>(collectionName)
+    .findOne({ id }, { projection: { _id: 0 } })
+}
+
+export async function deleteOrder(id: string) {
+  const db = await getDb()
+  const order = await db
+    .collection<OrderDocument>(collectionName)
+    .findOne({ id }, { projection: { _id: 0 } })
+  if (!order) return null
+
+  await db.collection<OrderDocument>(collectionName).deleteOne({ id })
+  return order
+}

@@ -162,3 +162,28 @@ export async function deleteSession(token?: string) {
   const db = await getDb()
   await db.collection(sessionsCollection).deleteOne({ token })
 }
+
+export async function getUsers() {
+  const db = await getDb()
+  await ensureAuthIndexes(db)
+  const users = await db
+    .collection<UserDocument>(usersCollection)
+    .find({}, { projection: { passwordHash: 0, passwordSalt: 0, _id: 0 } })
+    .sort({ createdAt: -1 })
+    .toArray()
+
+  return users as AppUser[]
+}
+
+export async function deleteUserById(id: string) {
+  const db = await getDb()
+  await ensureAuthIndexes(db)
+  const user = await db
+    .collection<UserDocument>(usersCollection)
+    .findOne({ id })
+  if (!user) return null
+
+  await db.collection<UserDocument>(usersCollection).deleteOne({ id })
+  await db.collection(sessionsCollection).deleteMany({ userId: id })
+  return publicUser(user)
+}

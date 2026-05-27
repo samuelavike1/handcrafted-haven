@@ -14,10 +14,10 @@ export default async function SellerDashboardPage() {
   if (!hasRole(user, ["seller", "admin"])) redirect("/sell/login")
 
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
+    <div className="min-h-screen bg-[#f4f6f5]">
       <Navbar />
 
-      <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
+      <main className="mx-auto max-w-[1160px] px-4 py-6 sm:px-5 lg:px-6">
         <SellerDashboardClient
           user={{
             name: user.name,
