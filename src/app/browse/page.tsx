@@ -1,16 +1,19 @@
 import { Metadata } from "next"
-import { Sparkles, Star } from "lucide-react"
+import { ChevronDown, SlidersHorizontal, Sparkles, Star } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import ProductCatalogClient from "@/components/product-catalog-client"
 import { getProducts } from "@/lib/server-products"
-import { products as fallbackProducts } from "@/lib/market-data"
+import { categories, products as fallbackProducts } from "@/lib/market-data"
 
 export const metadata: Metadata = {
   title: "Browse Handmade Goods | Handcrafted Haven",
   description:
     "Explore handcrafted ceramics, textiles, woodwork, jewelry, and sustainable artisan goods.",
 }
+
+const priceRanges = ["Under $50", "$50 - $100", "$100 - $200", "$200+"]
+const values = ["Sustainable", "Made locally", "Giftable", "Customizable"]
 
 const categoryBySlug: Record<string, string> = {
   ceramics: "Ceramics",
@@ -144,7 +147,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
             <div className="mb-5 flex flex-col gap-4 rounded-lg border border-hh-border bg-hh-card p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-hh-muted">
-                  Showing {products.length} curated products
+                  Showing {productResult.products.length} curated products
                 </p>
                 <h2 className="text-lg font-black text-hh-heading">
                   Artisanal collections
@@ -160,11 +163,6 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} showAction />
-              ))}
-            </div>
           </section>
         </div>
         <ProductCatalogClient

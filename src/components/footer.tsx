@@ -99,10 +99,8 @@ export default function Footer({ variant = "default" }: FooterProps) {
                 {links.map((link) => (
                   <li key={link.href}>
                     <Link
-                      href={`/${link.toLowerCase().replaceAll(" ", "-")}`}
-                      className="text-sm text-hh-muted transition hover:text-hh-heading"
                       href={link.href}
-                      className="text-sm text-[#53615c] transition hover:text-[#063f34] focus:ring-4 focus:ring-[#063f34]/10 focus:outline-none"
+                      className="text-sm text-hh-muted transition hover:text-hh-heading focus:ring-4 focus:ring-[#063f34]/10 focus:outline-none"
                     >
                       {link.label}
                     </Link>

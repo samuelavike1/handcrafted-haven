@@ -199,7 +199,6 @@ export default function HomePage() {
                 <input
                   className="h-9 w-full rounded-lg border border-hh-border bg-hh-card pr-4 pl-12 text-sm outline-none"
                   name="q"
-                  className="h-9 w-full rounded-lg border border-[#d8dfdc] bg-white pr-4 pl-12 text-sm outline-none"
                   placeholder="Search vases, throws, trays..."
                 />
               </form>

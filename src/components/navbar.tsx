@@ -1,11 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
-import { Bell, Menu, Moon, Search, ShoppingBag, Sun, X } from "lucide-react"
-import { useTheme } from "next-themes"
 import { usePathname, useRouter } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react"
 import {
@@ -13,13 +8,16 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Moon,
   Search,
   ShieldCheck,
   ShoppingBag,
   Store,
+  Sun,
   UserRound,
   X,
 } from "lucide-react"
+import { useTheme } from "next-themes"
 import { toast } from "sonner"
 import appLogo from "../../Logo.jpg"
 import { cartUpdatedEvent, readCart } from "@/lib/cart"
@@ -59,6 +57,7 @@ export default function Navbar() {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
+
   const [user, setUser] = useState<CurrentUser | null>(null)
   const [search, setSearch] = useState("")
   const [cartCount, setCartCount] = useState(0)
@@ -117,9 +116,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-hh-border bg-hh-canvas/95 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-[1080px] items-center gap-4 px-4 sm:px-5 lg:px-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="relative h-8 w-8 overflow-hidden rounded-md border border-hh-border bg-hh-card">
-            <Image
-          <span className="relative h-9 w-9 overflow-hidden rounded-md border border-[#d8dfdc] bg-white p-0.5">
+          <span className="relative h-9 w-9 overflow-hidden rounded-md border border-hh-border bg-hh-card p-0.5">
             <ShimmerImage
               src={appLogo}
               alt="Handcrafted Haven logo"
@@ -167,7 +164,6 @@ export default function Navbar() {
             className="h-9 w-full rounded-md border border-hh-border bg-hh-card pr-3 pl-9 text-xs transition outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/10"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className="h-9 w-full rounded-md border border-[#d8dfdc] bg-white pr-3 pl-9 text-xs transition outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/10"
             placeholder={
               pathname === "/sell"
                 ? "Search listings, orders..."
@@ -202,7 +198,6 @@ export default function Navbar() {
                 description: "Marketplace alerts will appear here.",
               })
             }
-            className="hidden h-8 w-8 items-center justify-center rounded-md text-[#063f34] transition hover:bg-[#edf2ef] sm:flex"
             aria-label="Notifications"
           >
             <Bell size={18} />
@@ -213,18 +208,6 @@ export default function Navbar() {
             aria-label="Toggle theme"
           >
             {mounted && resolvedTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <button
-            className="relative hidden h-8 w-8 overflow-hidden rounded-md border border-hh-border sm:block"
-            aria-label="Account"
-          >
-            <Image
-              src="/product_teapot_1779021133816.png"
-              alt=""
-              fill
-              className="object-cover"
-              unoptimized
-            />
           </button>
           {user ? (
             <DropdownMenu>
@@ -297,8 +280,6 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className="border-t border-hh-border bg-hh-canvas px-4 py-4 md:hidden">
-          <div className="relative mb-4">
-        <div className="border-t border-[#d8dfdc] bg-[#fbfbf8] px-4 py-4 md:hidden">
           <form onSubmit={submitSearch} className="relative mb-4">
             <Search
               className="absolute top-1/2 left-3 -translate-y-1/2 text-hh-muted"
@@ -308,7 +289,6 @@ export default function Navbar() {
               className="h-9 w-full rounded-md border border-hh-border bg-hh-card pr-3 pl-9 text-sm outline-none"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              className="h-9 w-full rounded-md border border-[#d8dfdc] bg-white pr-3 pl-9 text-sm outline-none"
               placeholder="Search handmade goods..."
             />
           </form>

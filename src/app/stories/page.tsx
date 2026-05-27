@@ -1,4 +1,5 @@
-import { Clock, Leaf, Users } from "lucide-react"
+import { ArrowRight, Clock, Leaf, Users } from "lucide-react"
+import Link from "next/link"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Metadata } from "next"
@@ -51,7 +52,7 @@ export default function StoriesPage() {
             href={`/stories/${featured.id}`}
             className="group overflow-hidden rounded-lg border border-hh-border bg-hh-card"
           >
-          <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white">
+          <article>
             <div className="relative h-[240px] overflow-hidden">
               <ShimmerImage
                 src={featured.image}
@@ -76,11 +77,10 @@ export default function StoriesPage() {
               </p>
               <p className="mt-5 inline-flex items-center gap-2 font-black text-hh-heading">
                 Read story <ArrowRight size={18} />
-              <p className="mt-5 text-sm font-bold text-[#53615c]">
-                Full story page coming soon.
               </p>
             </div>
           </article>
+          </Link>
         </section>
 
         <section className="border-t border-hh-border bg-hh-surface py-6">
@@ -97,9 +97,7 @@ export default function StoriesPage() {
               {rest.map((story) => (
                 <article
                   key={story.id}
-                  href={`/stories/${story.id}`}
                   className="group grid overflow-hidden rounded-lg border border-hh-border bg-hh-card sm:grid-cols-[180px_1fr]"
-                  className="group grid overflow-hidden rounded-lg border border-[#d8dfdc] bg-white sm:grid-cols-[180px_1fr]"
                 >
                   <div className="relative min-h-[150px] overflow-hidden">
                     <ShimmerImage

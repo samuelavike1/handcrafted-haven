@@ -71,54 +71,13 @@ export default function CartPage() {
 
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <section className="space-y-5">
-            {items.map((item) => (
-              <article
-                key={item.id}
-                className="grid gap-4 rounded-lg border border-hh-border bg-hh-card p-4 sm:grid-cols-[104px_1fr_auto]"
-              >
-                <div className="relative aspect-square overflow-hidden rounded-lg bg-hh-subtle">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                </div>
-                <div>
-                  <p className="text-[11px] font-black text-[#9a4d10] uppercase">
-                    {item.category}
-                  </p>
-                  <h2 className="mt-1 text-lg font-black text-hh-heading">
-                    {item.name}
-                  </h2>
-                  <p className="mt-2 text-sm text-hh-muted">
-                    by <span className="font-bold">{item.seller}</span>
-                  </p>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-hh-muted">
-                    {item.description}
-                  </p>
-                </div>
-                <div className="flex flex-row items-center justify-between gap-4 sm:flex-col sm:items-end">
-                  <p className="text-lg font-black">${item.price.toFixed(2)}</p>
-                  <div className="flex h-9 items-center rounded-lg border border-hh-border">
-                    <button
-                      className="px-3"
-                      onClick={() => updateQty(item.id, -1)}
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <span className="min-w-8 text-center font-black">
-                      {item.qty}
-                    </span>
             {items.length ? (
               items.map((item) => (
                 <article
                   key={item.id}
-                  className="grid gap-4 rounded-lg border border-[#d8dfdc] bg-white p-4 sm:grid-cols-[104px_1fr_auto]"
+                  className="grid gap-4 rounded-lg border border-hh-border bg-hh-card p-4 sm:grid-cols-[104px_1fr_auto]"
                 >
-                  <div className="relative aspect-square overflow-hidden rounded-lg bg-[#edf2ef]">
+                  <div className="relative aspect-square overflow-hidden rounded-lg bg-hh-subtle">
                     <ShimmerImage
                       src={item.image}
                       alt={item.name}
@@ -131,16 +90,16 @@ export default function CartPage() {
                     <p className="text-[11px] font-black text-[#9a4d10] uppercase">
                       {item.category}
                     </p>
-                    <h2 className="mt-1 text-lg font-black text-[#063f34]">
+                    <h2 className="mt-1 text-lg font-black text-hh-heading">
                       {item.name}
                     </h2>
                     {item.seller && (
-                      <p className="mt-2 text-sm text-[#53615c]">
+                      <p className="mt-2 text-sm text-hh-muted">
                         by <span className="font-bold">{item.seller}</span>
                       </p>
                     )}
                     {item.description && (
-                      <p className="mt-3 max-w-xl text-sm leading-6 text-[#53615c]">
+                      <p className="mt-3 max-w-xl text-sm leading-6 text-hh-muted">
                         {item.description}
                       </p>
                     )}
@@ -149,7 +108,7 @@ export default function CartPage() {
                     <p className="text-lg font-black">
                       ${item.price.toFixed(2)}
                     </p>
-                    <div className="flex h-9 items-center rounded-lg border border-[#d8dfdc]">
+                    <div className="flex h-9 items-center rounded-lg border border-hh-border">
                       <button
                         className="px-3"
                         onClick={() => updateQty(item.id, -1)}
@@ -182,11 +141,11 @@ export default function CartPage() {
                 </article>
               ))
             ) : (
-              <div className="rounded-lg border border-[#d8dfdc] bg-white p-6">
-                <h2 className="text-lg font-black text-[#063f34]">
+              <div className="rounded-lg border border-hh-border bg-hh-card p-6">
+                <h2 className="text-lg font-black text-hh-heading">
                   Your cart is empty
                 </h2>
-                <p className="mt-2 text-sm text-[#53615c]">
+                <p className="mt-2 text-sm text-hh-muted">
                   Add a handmade piece from the marketplace before checkout.
                 </p>
                 <Link

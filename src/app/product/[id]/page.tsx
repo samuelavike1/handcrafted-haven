@@ -55,40 +55,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         </nav>
 
         <section className="grid gap-5 lg:grid-cols-[0.9fr_1fr]">
-          <div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-hh-border bg-hh-subtle">
-              <Image
-                src={gallery[activeImage]}
-                alt={product.name}
-                fill
-                priority
-                className="object-cover"
-                unoptimized
-              />
-            </div>
-            <div className="mt-3 grid grid-cols-4 gap-2">
-              {gallery.map((image, index) => (
-                <button
-                  key={image}
-                  onClick={() => setActiveImage(index)}
-                  className={`relative aspect-[4/3] overflow-hidden rounded-lg border-2 ${
-                    activeImage === index
-                      ? "border-[#063f34]"
-                      : "border-transparent"
-                  }`}
-                  aria-label={`View product image ${index + 1}`}
-                >
-                  <Image
-                    src={image}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
           <ProductDetailClient
             product={{
               id: product.id,
@@ -120,14 +86,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </p>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <p className="text-2xl font-black text-hh-body">$185.00</p>
-              <p className="flex items-center gap-1 rounded-lg border border-hh-border bg-hh-card px-3 py-1.5 text-xs font-bold">
-                <Star size={16} className="fill-[#c8651b] text-[#c8651b]" /> 4.8
-                · 124 reviews
-              <p className="text-2xl font-black text-[#1b211f]">
+              <p className="text-2xl font-black text-hh-body">
                 ${product.price.toFixed(2)}
               </p>
-              <p className="flex items-center gap-1 rounded-lg border border-[#d8dfdc] bg-white px-3 py-1.5 text-xs font-bold">
+              <p className="flex items-center gap-1 rounded-lg border border-hh-border bg-hh-card px-3 py-1.5 text-xs font-bold">
                 <Star size={16} className="fill-[#c8651b] text-[#c8651b]" />{" "}
                 {product.rating} · {product.reviews} reviews
               </p>
@@ -139,11 +101,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             <p className="mt-4 max-w-2xl text-sm leading-6 text-hh-muted">
-              Sculpted from iron-rich stoneware clay, this vase has a tactile
-              ribbed surface, subtle mineral speckling, and a warm
-              reduction-fired finish. Each piece is made in small batches and
-              signed by the maker.
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#53615c]">
               {product.description}
             </p>
 
@@ -158,35 +115,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               ))}
             </div>
 
-            <div className="mt-4 rounded-lg border border-hh-border bg-hh-card p-4">
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <div className="flex h-9 w-36 items-center justify-between rounded-lg border border-hh-border px-3">
-                  <button
-                    onClick={() => setQty(Math.max(1, qty - 1))}
-                    aria-label="Decrease quantity"
-                  >
-                    <Minus size={18} />
-                  </button>
-                  <span className="font-black">{qty}</span>
-                  <button
-                    onClick={() => setQty(qty + 1)}
-                    aria-label="Increase quantity"
-                  >
-                    <Plus size={18} />
-                  </button>
-                </div>
-                <button className="h-9 flex-1 rounded-md bg-[#f28a35] px-4 text-sm font-black text-white transition hover:bg-[#dc7624]">
-                  Add to cart
-                </button>
-              </div>
-              <button
-                onClick={() => setSaved((value) => !value)}
-                className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-md border border-[#063f34] text-sm font-black text-[#063f34] transition hover:bg-[#edf2ef]"
-              >
-                <Heart size={18} fill={saved ? "currentColor" : "none"} />{" "}
-                {saved ? "Saved" : "Save to collection"}
-              </button>
-            </div>
             <ProductDetailClient
               product={{
                 id: product.id,
@@ -228,8 +156,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               Loved by collectors.
             </h2>
             <div className="mt-5 rounded-lg bg-hh-card p-4">
-              <p className="text-2xl font-black">4.8</p>
-            <div className="mt-5 rounded-lg bg-white p-4">
               <p className="text-2xl font-black">{product.rating}</p>
               <p className="mt-2 flex text-[#c8651b]">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -237,8 +163,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 ))}
               </p>
               <p className="mt-2 text-sm text-hh-muted">
-                Based on 124 written reviews
-              <p className="mt-2 text-sm text-[#53615c]">
                 Based on {product.reviews} written reviews
               </p>
             </div>
@@ -247,18 +171,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           <div className="space-y-5">
             {reviewItems.map((review) => (
               <article
-                key={review.name}
+                key={review.id}
                 className="rounded-lg border border-hh-border bg-hh-card p-4"
               >
                 <div className="flex justify-between gap-4">
                   <div>
-                    <p className="font-black text-hh-heading">{review.name}</p>
-                key={review.id}
-                className="rounded-lg border border-[#d8dfdc] bg-white p-4"
-              >
-                <div className="flex justify-between gap-4">
-                  <div>
-                    <p className="font-black text-[#063f34]">{review.author}</p>
+                    <p className="font-black text-hh-heading">{review.author}</p>
                     <p className="mt-1 flex text-[#c8651b]">
                       {Array.from({ length: Math.round(review.rating) }).map(
                         (_, index) => (
@@ -267,17 +185,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                       )}
                     </p>
                   </div>
-                  <p className="text-sm text-hh-muted">{review.date}</p>
-                  <p className="text-sm text-[#6d7a75]">
+                  <p className="text-sm text-hh-muted">
                     {formatDate(review.createdAt)}
                   </p>
                 </div>
-                <h3 className="mt-4 text-lg font-black text-hh-body">
-                  {review.title}
-                </h3>
                 <p className="mt-2 leading-relaxed text-hh-muted">
-                  {review.text}
-                <p className="mt-2 leading-relaxed text-[#53615c]">
                   {review.comment}
                 </p>
                 <button className="mt-4 flex items-center gap-2 text-sm font-bold text-hh-muted">
