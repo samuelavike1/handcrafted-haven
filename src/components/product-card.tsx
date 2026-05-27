@@ -1,9 +1,9 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { Heart, MapPin, Star } from "lucide-react"
 import { useEffect, useState } from "react"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 export interface Product {
   id: string
@@ -15,6 +15,7 @@ export interface Product {
   reviews?: number
   category: string
   image: string
+  galleryImages?: string[]
   badge?: string
   materials?: string[]
   description?: string
@@ -63,7 +64,7 @@ export default function ProductCard({
         <div
           className={`relative overflow-hidden bg-[#edf2ef] ${compact ? "aspect-[4/2.8]" : "aspect-[4/2.45]"}`}
         >
-          <Image
+          <ShimmerImage
             src={product.image}
             alt={product.name}
             fill

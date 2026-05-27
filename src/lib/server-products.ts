@@ -43,6 +43,7 @@ export async function ensureSeedProducts() {
     products.map((product, index) => ({
       ...product,
       id: product.id,
+      galleryImages: [],
       stock: index === 3 ? 2 : 12 - index * 2,
       status: index === 3 ? "Low stock" : "Active",
       rating: product.rating,
@@ -146,4 +147,16 @@ export async function updateProduct(
   return db
     .collection<ProductDocument>(collectionName)
     .findOne({ id }, { projection: { _id: 0 } })
+}
+
+export async function deleteProduct(id: string, user: AppUser) {
+  const db = await getDb()
+  const collection = db.collection<ProductDocument>(collectionName)
+  const existing = await collection.findOne({ id })
+
+  if (!existing) return null
+  if (user.role !== "admin" && existing.sellerId !== user.id) return "forbidden"
+
+  await collection.deleteOne({ id })
+  return existing
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -15,6 +14,7 @@ import { useEffect, useState } from "react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { type CartItem, readCart, writeCart } from "@/lib/cart"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([])
@@ -78,7 +78,7 @@ export default function CartPage() {
                   className="grid gap-4 rounded-lg border border-[#d8dfdc] bg-white p-4 sm:grid-cols-[104px_1fr_auto]"
                 >
                   <div className="relative aspect-square overflow-hidden rounded-lg bg-[#edf2ef]">
-                    <Image
+                    <ShimmerImage
                       src={item.image}
                       alt={item.name}
                       fill
