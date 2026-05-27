@@ -36,7 +36,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const materials = product.materials ?? []
   const galleryImages = [
     product.image,
-    ...related.slice(0, 3).map((item) => item.image),
+    ...(product.galleryImages ?? []),
   ].filter(Boolean)
 
   return (

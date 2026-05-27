@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { ArrowLeft, PackageCheck, ShieldCheck, Truck } from "lucide-react"
@@ -6,6 +5,7 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { getCurrentUser, hasRole } from "@/lib/server-auth"
 import { getOrderForUser } from "@/lib/server-orders"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 interface OrderDetailPageProps {
   params: Promise<{ id: string }>
@@ -59,7 +59,7 @@ export default async function OrderDetailPage({
                   className="grid gap-3 rounded-lg border border-[#d8dfdc] bg-[#fbfbf8] p-3 sm:grid-cols-[72px_1fr_auto]"
                 >
                   <div className="relative aspect-square overflow-hidden rounded-lg bg-[#edf2ef]">
-                    <Image
+                    <ShimmerImage
                       src={item.image}
                       alt=""
                       fill

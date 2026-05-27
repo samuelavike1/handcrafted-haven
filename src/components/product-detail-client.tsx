@@ -1,10 +1,10 @@
 "use client"
 
-import Image from "next/image"
 import { useEffect, useState } from "react"
 import { Heart, Minus, Plus } from "lucide-react"
 import { toast } from "sonner"
 import { addCartItem } from "@/lib/cart"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 type ProductDetailClientProps = {
   product: {
@@ -80,7 +80,7 @@ export default function ProductDetailClient({
     return (
       <div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#edf2ef]">
-          <Image
+          <ShimmerImage
             src={images[activeImage]}
             alt={product.name}
             fill
@@ -102,7 +102,7 @@ export default function ProductDetailClient({
               }`}
               aria-label={`View product image ${index + 1}`}
             >
-              <Image
+              <ShimmerImage
                 src={image}
                 alt=""
                 fill

@@ -1,9 +1,9 @@
-import Image from "next/image"
 import { Clock, Leaf, Users } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { Metadata } from "next"
 import { storyPosts } from "@/lib/market-data"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 export const metadata: Metadata = {
   title: "Artisan Stories | Handcrafted Haven",
@@ -49,7 +49,7 @@ export default function StoriesPage() {
 
           <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white">
             <div className="relative h-[240px] overflow-hidden">
-              <Image
+              <ShimmerImage
                 src={featured.image}
                 alt={featured.title}
                 fill
@@ -94,7 +94,7 @@ export default function StoriesPage() {
                   className="group grid overflow-hidden rounded-lg border border-[#d8dfdc] bg-white sm:grid-cols-[180px_1fr]"
                 >
                   <div className="relative min-h-[150px] overflow-hidden">
-                    <Image
+                    <ShimmerImage
                       src={story.image}
                       alt={story.title}
                       fill

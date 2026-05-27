@@ -7,6 +7,7 @@ export const runtime = "nodejs"
 
 const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"])
 const maxFileSize = 3 * 1024 * 1024
+const maxFiles = 6
 
 type UploadedFile = {
   name: string
@@ -52,39 +53,60 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData()
-    const file = formData.get("image")
+    const files: UploadedFile[] = []
+    for (const entry of [
+      ...formData.getAll("images"),
+      ...formData.getAll("image"),
+    ]) {
+      if (isUploadedFile(entry)) files.push(entry)
+    }
 
-    if (!isUploadedFile(file)) {
+    if (!files.length) {
       return NextResponse.json(
         { errors: { image: ["Choose a product image to upload."] } },
         { status: 400 }
       )
     }
 
-    if (!allowedTypes.has(file.type)) {
+    if (files.length > maxFiles) {
+      return NextResponse.json(
+        { errors: { image: [`Upload up to ${maxFiles} images.`] } },
+        { status: 400 }
+      )
+    }
+
+    const invalidType = files.find((file) => !allowedTypes.has(file.type))
+    if (invalidType) {
       return NextResponse.json(
         { errors: { image: ["Upload a JPG, PNG, or WebP image."] } },
         { status: 400 }
       )
     }
 
-    if (file.size > maxFileSize) {
+    const oversized = files.find((file) => file.size > maxFileSize)
+    if (oversized) {
       return NextResponse.json(
-        { errors: { image: ["Product image must be 3MB or smaller."] } },
+        { errors: { image: ["Each product image must be 3MB or smaller."] } },
         { status: 400 }
       )
     }
 
-    const bytes = Buffer.from(await file.arrayBuffer())
     const uploadsDir = path.join(process.cwd(), "public", "uploads", "products")
     await mkdir(uploadsDir, { recursive: true })
 
-    const baseName = safeBaseName(file.name) || "product"
-    const filename = `${baseName}-${Date.now()}.${extensionForType(file.type)}`
-    await writeFile(path.join(uploadsDir, filename), bytes)
+    const imageUrls = await Promise.all(
+      files.map(async (file, index) => {
+        const bytes = Buffer.from(await file.arrayBuffer())
+        const baseName = safeBaseName(file.name) || "product"
+        const filename = `${baseName}-${Date.now()}-${index}.${extensionForType(file.type)}`
+        await writeFile(path.join(uploadsDir, filename), bytes)
+        return `/uploads/products/${filename}`
+      })
+    )
 
     return NextResponse.json({
-      imageUrl: `/uploads/products/${filename}`,
+      imageUrl: imageUrls[0],
+      imageUrls,
     })
   } catch {
     return NextResponse.json(

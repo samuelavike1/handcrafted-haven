@@ -59,13 +59,17 @@ export const adminCreateSchema = z.object({
 })
 
 export const productInputSchema = z.object({
-  id: z.string().trim().min(1).optional(),
+  id: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().trim().min(1).optional()
+  ),
   name: z.string().trim().min(3, "Product name must be at least 3 characters."),
   seller: z.string().trim().min(2, "Seller name is required."),
   sellerLocation: z.string().trim().optional(),
   price: z.coerce.number().min(1, "Price must be greater than 0."),
   category: z.string().trim().min(1, "Choose a category."),
   image: z.string().trim().min(1, "Choose an image."),
+  galleryImages: z.array(z.string().trim().min(1)).default([]),
   badge: z.string().trim().optional(),
   materials: z.array(z.string().trim()).default([]),
   description: z

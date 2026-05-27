@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { FormEvent, useEffect, useState } from "react"
 import {
@@ -19,6 +18,7 @@ import {
 import { toast } from "sonner"
 import appLogo from "../../Logo.jpg"
 import { cartUpdatedEvent, readCart } from "@/lib/cart"
+import ShimmerImage from "@/components/ui/shimmer-image"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -110,7 +110,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-14 max-w-[1080px] items-center gap-4 px-4 sm:px-5 lg:px-6">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="relative h-9 w-9 overflow-hidden rounded-md border border-[#d8dfdc] bg-white p-0.5">
-            <Image
+            <ShimmerImage
               src={appLogo}
               alt="Handcrafted Haven logo"
               fill

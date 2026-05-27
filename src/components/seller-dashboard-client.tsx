@@ -1,10 +1,9 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
-import { FormEvent, useEffect, useMemo, useState } from "react"
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react"
 import type { ChangeEvent } from "react"
 import {
+  AlertTriangle,
   BadgeCheck,
   BarChart3,
   Edit3,
@@ -15,6 +14,7 @@ import {
   PackageCheck,
   PackagePlus,
   Star,
+  Trash2,
   Truck,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -33,8 +33,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { TableSkeleton } from "@/components/ui/loading"
+import { Skeleton, TableSkeleton } from "@/components/ui/loading"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 type Listing = {
   id: string
@@ -46,6 +47,7 @@ type Listing = {
   reviews: number
   category: string
   image: string
+  galleryImages: string[]
   badge?: string
   materials: string[]
   description: string
@@ -53,7 +55,14 @@ type Listing = {
   status: "Active" | "Low stock" | "Draft"
 }
 
+type ListingDraft = Omit<Listing, "price" | "stock"> & {
+  price: string
+  stock: string
+}
+
 type FieldErrors = Partial<Record<keyof Listing, string[]>>
+
+const pricePattern = /^\d+(\.\d{1,2})?$/
 
 type SellerOrder = {
   id: string
@@ -77,21 +86,30 @@ type DashboardStats = {
   lowStockCount: number
 }
 
-const emptyListing: Listing = {
+const emptyListing: ListingDraft = {
   id: "",
   name: "",
   seller: featuredSeller.name,
   sellerLocation: featuredSeller.location,
-  price: 0,
+  price: "",
   rating: 0,
   reviews: 0,
   category: "Ceramics",
   image: "",
+  galleryImages: [],
   badge: "New",
   materials: [],
   description: "",
-  stock: 1,
+  stock: "1",
   status: "Draft",
+}
+
+function normalizeListing(listing: Listing): Listing {
+  return {
+    ...listing,
+    materials: listing.materials ?? [],
+    galleryImages: listing.galleryImages ?? [],
+  }
 }
 
 type SellerDashboardUser = {
@@ -119,13 +137,17 @@ export default function SellerDashboardClient({
     lowStockCount: 0,
   })
   const [modalMode, setModalMode] = useState<"add" | "edit" | null>(null)
-  const [draft, setDraft] = useState<Listing>(emptyListing)
+  const [draft, setDraft] = useState<ListingDraft>(emptyListing)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [statusMessage, setStatusMessage] = useState("")
+  const [formMessage, setFormMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState("")
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<Listing | null>(null)
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     let active = true
@@ -140,9 +162,9 @@ export default function SellerDashboardClient({
 
         if (!response.ok) throw new Error(data.error)
         if (active) {
-          setListings(data.products)
+          setListings(data.products.map(normalizeListing))
           setOrders(data.orders)
-          setLowStock(data.lowStock)
+          setLowStock(data.lowStock.map(normalizeListing))
           setDashboardStats(data.stats)
           setStatusMessage("")
         }
@@ -168,9 +190,9 @@ export default function SellerDashboardClient({
 
   useEffect(() => {
     return () => {
-      if (imagePreview) URL.revokeObjectURL(imagePreview)
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview))
     }
-  }, [imagePreview])
+  }, [imagePreviews])
 
   const stats = useMemo(
     () => [
@@ -204,34 +226,108 @@ export default function SellerDashboardClient({
 
   const openAddModal = () => {
     setDraft(emptyListing)
-    setImageFile(null)
-    setImagePreview("")
+    setImageFiles([])
+    setImagePreviews([])
     setErrors({})
     setStatusMessage("")
+    setFormMessage("")
     setModalMode("add")
   }
 
   const openEditModal = (listing: Listing) => {
-    setDraft({ ...listing, materials: [...listing.materials] })
-    setImageFile(null)
-    setImagePreview("")
+    setDraft({
+      ...listing,
+      price: String(listing.price),
+      stock: String(listing.stock),
+      materials: [...(listing.materials ?? [])],
+      galleryImages: [...(listing.galleryImages ?? [])],
+    })
+    setImageFiles([])
+    setImagePreviews([])
     setErrors({})
     setStatusMessage("")
+    setFormMessage("")
     setModalMode("edit")
   }
 
   const closeModal = () => {
     if (isSaving) return
     setModalMode(null)
-    setImageFile(null)
-    setImagePreview("")
+    setImageFiles([])
+    setImagePreviews([])
     setErrors({})
+    setFormMessage("")
   }
 
-  const updateDraft = (field: keyof Listing, value: string | number) => {
+  const updateDraft = (field: keyof ListingDraft, value: string) => {
     setDraft((current) => ({ ...current, [field]: value }))
     setErrors((current) => ({ ...current, [field]: undefined }))
+    setFormMessage("")
   }
+
+  const focusFirstError = () => {
+    window.setTimeout(() => {
+      const target = formRef.current?.querySelector<HTMLElement>(
+        '[aria-invalid="true"]'
+      )
+      target?.focus()
+    }, 0)
+  }
+
+  const validateDraft = () => {
+    const nextErrors: FieldErrors = {}
+    const price = draft.price.trim()
+    const stock = draft.stock.trim()
+
+    if (draft.name.trim().length < 3) {
+      nextErrors.name = ["Product name must be at least 3 characters."]
+    }
+
+    if (!draft.image && !imageFiles.length) {
+      nextErrors.image = ["Choose at least one product image."]
+    }
+
+    if (!draft.category) {
+      nextErrors.category = ["Choose a category."]
+    }
+
+    if (!price) {
+      nextErrors.price = ["Price is required."]
+    } else if (!pricePattern.test(price) || Number(price) <= 0) {
+      nextErrors.price = ["Price must be greater than 0."]
+    }
+
+    if (!stock) {
+      nextErrors.stock = ["Stock is required."]
+    } else if (!Number.isInteger(Number(stock)) || Number(stock) < 0) {
+      nextErrors.stock = ["Stock cannot be negative."]
+    }
+
+    if (draft.description.trim().length < 20) {
+      nextErrors.description = ["Description must be at least 20 characters."]
+    }
+
+    return nextErrors
+  }
+
+  const buildProductPayload = (uploadedImages: {
+    image: string
+    galleryImages: string[]
+  }) => ({
+    ...(modalMode === "edit" && draft.id ? { id: draft.id } : {}),
+    name: draft.name.trim(),
+    seller: draft.seller,
+    sellerLocation: draft.sellerLocation,
+    price: draft.price.trim(),
+    category: draft.category,
+    image: uploadedImages.image,
+    galleryImages: uploadedImages.galleryImages,
+    badge: draft.badge,
+    materials: draft.materials,
+    description: draft.description.trim(),
+    stock: draft.stock.trim(),
+    status: draft.status,
+  })
 
   const updateMaterials = (value: string) => {
     setDraft((current) => ({
@@ -241,21 +337,33 @@ export default function SellerDashboardClient({
         .map((item) => item.trim())
         .filter(Boolean),
     }))
+    setErrors((current) => ({ ...current, materials: undefined }))
+    setFormMessage("")
   }
 
-  const updateImageFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] ?? null
-    if (imagePreview) URL.revokeObjectURL(imagePreview)
-    setImageFile(file)
-    setImagePreview(file ? URL.createObjectURL(file) : "")
+  const updateImageFiles = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files ?? []).slice(0, 6)
+    imagePreviews.forEach((preview) => URL.revokeObjectURL(preview))
+    setImageFiles(files)
+    setImagePreviews(files.map((file) => URL.createObjectURL(file)))
     setErrors((current) => ({ ...current, image: undefined }))
+    setFormMessage("")
   }
 
-  const uploadImage = async () => {
-    if (!imageFile) return draft.image
+  const uploadImages = async () => {
+    const existingImages = [draft.image, ...(draft.galleryImages ?? [])].filter(
+      Boolean
+    )
+
+    if (!imageFiles.length) {
+      return {
+        image: draft.image,
+        galleryImages: draft.galleryImages ?? [],
+      }
+    }
 
     const formData = new FormData()
-    formData.append("image", imageFile)
+    imageFiles.forEach((file) => formData.append("images", file))
 
     const response = await fetch("/api/uploads/products", {
       method: "POST",
@@ -268,37 +376,62 @@ export default function SellerDashboardClient({
       throw new Error(data.error ?? "Product image could not be uploaded.")
     }
 
-    return data.imageUrl as string
+    const imageUrls = data.imageUrls as string[]
+
+    if (existingImages.length) {
+      const image = draft.image || imageUrls[0]
+      const galleryImages = [
+        ...(draft.galleryImages ?? []),
+        ...imageUrls.filter((url) => url !== image),
+      ]
+      return { image, galleryImages }
+    }
+
+    return {
+      image: imageUrls[0],
+      galleryImages: imageUrls.slice(1),
+    }
   }
 
   const saveListing = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsSaving(true)
     setErrors({})
-    setStatusMessage("")
+    setFormMessage("")
+
+    const validationErrors = validateDraft()
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      setFormMessage("Fix the highlighted fields before saving the product.")
+      setIsSaving(false)
+      focusFirstError()
+      return
+    }
 
     const endpoint =
       modalMode === "edit" ? `/api/products/${draft.id}` : "/api/products"
     const method = modalMode === "edit" ? "PUT" : "POST"
 
     try {
-      const uploadedImage = await uploadImage()
+      const uploadedImages = await uploadImages()
       const response = await fetch(endpoint, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...draft, image: uploadedImage }),
+        body: JSON.stringify(buildProductPayload(uploadedImages)),
       })
       const data = await response.json()
 
       if (!response.ok) {
         if (data.errors) setErrors(data.errors)
+        focusFirstError()
         throw new Error(data.error ?? "Please review the form fields.")
       }
 
       if (modalMode === "add") {
-        setListings((current) => [data.product, ...current])
+        const savedProduct = normalizeListing(data.product)
+        setListings((current) => [savedProduct, ...current])
         if (data.product.stock <= 3 || data.product.status === "Low stock") {
-          setLowStock((current) => [data.product, ...current])
+          setLowStock((current) => [savedProduct, ...current])
         }
         setDashboardStats((current) => ({
           ...current,
@@ -317,7 +450,7 @@ export default function SellerDashboardClient({
       } else {
         setListings((current) =>
           current.map((item) =>
-            item.id === data.product.id ? data.product : item
+            item.id === data.product.id ? normalizeListing(data.product) : item
           )
         )
         setLowStock((current) => {
@@ -325,7 +458,7 @@ export default function SellerDashboardClient({
             (item) => item.id !== data.product.id
           )
           return data.product.stock <= 3 || data.product.status === "Low stock"
-            ? [data.product, ...withoutUpdated]
+            ? [normalizeListing(data.product), ...withoutUpdated]
             : withoutUpdated
         })
         toast.success("Product updated", {
@@ -333,10 +466,10 @@ export default function SellerDashboardClient({
         })
       }
       setModalMode(null)
-      setImageFile(null)
-      setImagePreview("")
+      setImageFiles([])
+      setImagePreviews([])
     } catch (error) {
-      setStatusMessage(
+      setFormMessage(
         error instanceof Error
           ? error.message
           : "Product could not be saved. Check MongoDB and try again."
@@ -346,11 +479,59 @@ export default function SellerDashboardClient({
     }
   }
 
+  const confirmDeleteListing = async () => {
+    if (!deleteTarget) return
+
+    setIsDeleting(true)
+    setStatusMessage("")
+
+    try {
+      const response = await fetch(`/api/products/${deleteTarget.id}`, {
+        method: "DELETE",
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Product could not be deleted.")
+      }
+
+      setListings((current) =>
+        current.filter((item) => item.id !== deleteTarget.id)
+      )
+      setLowStock((current) =>
+        current.filter((item) => item.id !== deleteTarget.id)
+      )
+      setDashboardStats((current) => ({
+        ...current,
+        activeListings:
+          deleteTarget.status === "Active"
+            ? Math.max(0, current.activeListings - 1)
+            : current.activeListings,
+        lowStockCount:
+          deleteTarget.stock <= 3 || deleteTarget.status === "Low stock"
+            ? Math.max(0, current.lowStockCount - 1)
+            : current.lowStockCount,
+      }))
+      setDeleteTarget(null)
+      toast.success("Product deleted", {
+        description: `${deleteTarget.name} was removed from MongoDB.`,
+      })
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error
+          ? error.message
+          : "Product could not be deleted. Check MongoDB and try again."
+      )
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   return (
     <>
       <section className="overflow-hidden rounded-lg border border-[#d8dfdc] bg-white">
         <div className="relative h-40">
-          <Image
+          <ShimmerImage
             src={featuredSeller.cover}
             alt=""
             fill
@@ -362,7 +543,7 @@ export default function SellerDashboardClient({
         <div className="grid gap-4 p-4 md:grid-cols-[1fr_auto]">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative -mt-12 h-20 w-20 shrink-0 overflow-hidden rounded-lg border-4 border-white shadow-xl">
-              <Image
+              <ShimmerImage
                 src={featuredSeller.avatar}
                 alt=""
                 fill
@@ -391,20 +572,6 @@ export default function SellerDashboardClient({
                   "Manage listings, orders, inventory, and seller performance from this workspace."}
               </p>
             </div>
-          </div>
-          <div className="flex flex-wrap gap-2 md:self-start">
-            <Link
-              href="/sell/login"
-              className="rounded-lg border border-[#063f34] px-3 py-2 text-sm font-black text-[#063f34]"
-            >
-              Seller login
-            </Link>
-            <Link
-              href="/sell/register"
-              className="rounded-lg bg-[#f28a35] px-3 py-2 text-sm font-black text-white"
-            >
-              Register studio
-            </Link>
           </div>
         </div>
       </section>
@@ -497,7 +664,7 @@ export default function SellerDashboardClient({
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="relative h-10 w-10 overflow-hidden rounded-lg bg-[#edf2ef]">
-                          <Image
+                          <ShimmerImage
                             src={product.image}
                             alt=""
                             fill
@@ -530,13 +697,22 @@ export default function SellerDashboardClient({
                       ${product.price.toFixed(2)}
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => openEditModal(product)}
-                        className="inline-flex items-center gap-1 rounded-lg p-2 text-[#53615c] hover:bg-[#edf2ef] focus:ring-4 focus:ring-[#063f34]/10 focus:outline-none"
-                      >
-                        <Edit3 size={17} />
-                        <span className="text-xs font-bold">Edit</span>
-                      </button>
+                      <div className="flex flex-wrap gap-1">
+                        <button
+                          onClick={() => openEditModal(product)}
+                          className="inline-flex items-center gap-1 rounded-lg p-2 text-[#53615c] hover:bg-[#edf2ef] focus:ring-4 focus:ring-[#063f34]/10 focus:outline-none"
+                        >
+                          <Edit3 size={17} />
+                          <span className="text-xs font-bold">Edit</span>
+                        </button>
+                        <button
+                          onClick={() => setDeleteTarget(product)}
+                          className="inline-flex items-center gap-1 rounded-lg p-2 text-[#8b1f1f] hover:bg-[#fff0f0] focus:ring-4 focus:ring-[#ba1a1a]/10 focus:outline-none"
+                        >
+                          <Trash2 size={17} />
+                          <span className="text-xs font-bold">Delete</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -564,8 +740,22 @@ export default function SellerDashboardClient({
           <h2 className="text-2xl font-black text-[#063f34]">Recent orders</h2>
         </div>
         {isLoading ? (
-          <div className="p-4">
-            <TableSkeleton rows={3} />
+          <div className="divide-y divide-[#d8dfdc]">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="grid gap-3 p-4 sm:grid-cols-[1fr_auto]"
+              >
+                <div className="grid gap-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-full max-w-[360px]" />
+                </div>
+                <div className="grid gap-2 sm:justify-items-end">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-6 w-24" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : orders.length ? (
           <div className="divide-y divide-[#d8dfdc]">
@@ -612,8 +802,13 @@ export default function SellerDashboardClient({
           if (!open) closeModal()
         }}
       >
-        <DialogContent className="max-w-[760px] gap-0 overflow-hidden border-[#cfd9d4] bg-[#fbfbf8] p-0 text-[#191c1c] shadow-[0_24px_80px_rgba(18,40,33,0.28)] sm:max-w-[760px]">
-          <form onSubmit={saveListing} className="grid">
+        <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-[760px] gap-0 overflow-hidden border-[#cfd9d4] bg-[#fbfbf8] p-0 text-[#191c1c] shadow-[0_24px_80px_rgba(18,40,33,0.28)] sm:max-w-[760px]">
+          <form
+            ref={formRef}
+            onSubmit={saveListing}
+            className="grid max-h-[calc(100dvh-2rem)] grid-rows-[auto_minmax(0,1fr)_auto]"
+            noValidate
+          >
             <div className="border-b border-[#d8dfdc] bg-white p-5">
               <DialogHeader className="pr-10">
                 <p className="text-xs font-black text-[#9a4d10] uppercase">
@@ -629,9 +824,10 @@ export default function SellerDashboardClient({
               </DialogHeader>
             </div>
 
-            <div className="grid gap-4 bg-[#fbfbf8] p-5 sm:grid-cols-2">
+            <div className="grid gap-4 overflow-y-auto bg-[#fbfbf8] p-5 sm:grid-cols-2">
               <FormInput
                 label="Product name"
+                name="name"
                 value={draft.name}
                 error={errors.name?.[0]}
                 onChange={(value) => updateDraft("name", value)}
@@ -639,13 +835,15 @@ export default function SellerDashboardClient({
               />
               <ProductImageUpload
                 image={draft.image}
-                preview={imagePreview}
-                imageFile={imageFile}
+                galleryImages={draft.galleryImages ?? []}
+                previews={imagePreviews}
+                imageFiles={imageFiles}
                 error={errors.image?.[0]}
-                onChange={updateImageFile}
+                onChange={updateImageFiles}
               />
               <FormSelect
                 label="Category"
+                name="category"
                 value={draft.category}
                 options={["Ceramics", "Textiles", "Woodwork", "Jewelry"]}
                 error={errors.category?.[0]}
@@ -653,6 +851,7 @@ export default function SellerDashboardClient({
               />
               <FormSelect
                 label="Status"
+                name="status"
                 value={draft.status}
                 options={["Active", "Low stock", "Draft"]}
                 error={errors.status?.[0]}
@@ -660,20 +859,23 @@ export default function SellerDashboardClient({
               />
               <FormInput
                 label="Price"
+                name="price"
                 type="number"
                 value={draft.price}
                 error={errors.price?.[0]}
-                onChange={(value) => updateDraft("price", Number(value))}
+                onChange={(value) => updateDraft("price", value)}
               />
               <FormInput
                 label="Stock"
+                name="stock"
                 type="number"
                 value={draft.stock}
                 error={errors.stock?.[0]}
-                onChange={(value) => updateDraft("stock", Number(value))}
+                onChange={(value) => updateDraft("stock", value)}
               />
               <FormInput
                 label="Materials"
+                name="materials"
                 value={draft.materials.join(", ")}
                 helper="Separate materials with commas."
                 onChange={updateMaterials}
@@ -684,7 +886,14 @@ export default function SellerDashboardClient({
                   Description
                 </span>
                 <textarea
-                  required
+                  id="product-description"
+                  name="description"
+                  aria-invalid={Boolean(errors.description)}
+                  aria-describedby={
+                    errors.description
+                      ? "product-description-error"
+                      : "product-description-help"
+                  }
                   value={draft.description}
                   onChange={(event) =>
                     updateDraft("description", event.target.value)
@@ -693,15 +902,31 @@ export default function SellerDashboardClient({
                   className={`w-full rounded-lg border bg-[#fbfbf8] px-3 py-2 text-sm outline-none focus:border-[#063f34] ${errors.description ? "border-[#ba1a1a]" : "border-[#d8dfdc]"}`}
                 />
                 {errors.description?.[0] ? (
-                  <span className="mt-1 block text-xs font-semibold text-[#ba1a1a]">
+                  <span
+                    id="product-description-error"
+                    className="mt-1 block text-xs font-semibold text-[#ba1a1a]"
+                  >
                     {errors.description[0]}
                   </span>
                 ) : (
-                  <span className="mt-1 block text-xs text-[#6d7a75]">
+                  <span
+                    id="product-description-help"
+                    className="mt-1 block text-xs text-[#6d7a75]"
+                  >
                     Include material, process, care, and what makes it unique.
                   </span>
                 )}
               </label>
+              {formMessage && (
+                <Alert
+                  variant="destructive"
+                  className="border-[#f0b8b8] bg-[#fff7f7] text-[#7a1d1d] sm:col-span-2"
+                >
+                  <Info />
+                  <AlertTitle>Product was not saved</AlertTitle>
+                  <AlertDescription>{formMessage}</AlertDescription>
+                </Alert>
+              )}
             </div>
 
             <div className="flex justify-end gap-3 border-t border-[#d8dfdc] bg-white p-4">
@@ -726,39 +951,89 @@ export default function SellerDashboardClient({
           </form>
         </DialogContent>
       </Dialog>
+
+      <Dialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setDeleteTarget(null)
+        }}
+      >
+        <DialogContent className="max-w-[420px] border-[#f0b8b8] bg-white text-[#191c1c]">
+          <DialogHeader>
+            <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-lg bg-[#fff0f0] text-[#ba1a1a]">
+              <AlertTriangle size={20} />
+            </div>
+            <DialogTitle>Delete product?</DialogTitle>
+            <DialogDescription>
+              This will permanently remove{" "}
+              <span className="font-bold text-[#191c1c]">
+                {deleteTarget?.name}
+              </span>{" "}
+              from your seller listings.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => setDeleteTarget(null)}
+              disabled={isDeleting}
+              className="rounded-lg border border-[#d8dfdc] px-4 py-2 text-sm font-black text-[#53615c] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={confirmDeleteListing}
+              disabled={isDeleting}
+              className="inline-flex items-center justify-center rounded-lg bg-[#ba1a1a] px-4 py-2 text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isDeleting && (
+                <Loader2 className="mr-2 animate-spin" size={15} />
+              )}
+              Delete product
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
 
 function ProductImageUpload({
   image,
-  preview,
-  imageFile,
+  galleryImages,
+  previews,
+  imageFiles,
   error,
   onChange,
 }: {
   image: string
-  preview: string
-  imageFile: File | null
+  galleryImages: string[]
+  previews: string[]
+  imageFiles: File[]
   error?: string
   onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }) {
-  const previewImage = preview || image
+  const currentImages = [image, ...galleryImages].filter(Boolean)
+  const previewImages = previews.length
+    ? [...currentImages, ...previews]
+    : currentImages
+  const displayImage = previewImages[0]
 
   return (
     <label className="sm:col-span-2">
       <span className="mb-1.5 block text-sm font-bold text-[#53615c]">
-        Product image
+        Product images
       </span>
       <div
-        className={`grid gap-4 rounded-lg border bg-white p-3 sm:grid-cols-[150px_1fr] ${
+        className={`grid gap-4 rounded-lg border bg-white p-3 sm:grid-cols-[170px_1fr] ${
           error ? "border-[#ba1a1a]" : "border-[#d8dfdc]"
         }`}
       >
         <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-[#edf2ef]">
-          {previewImage ? (
-            <Image
-              src={previewImage}
+          {displayImage ? (
+            <ShimmerImage
+              src={displayImage}
               alt=""
               fill
               className="object-cover"
@@ -766,29 +1041,62 @@ function ProductImageUpload({
             />
           ) : (
             <div className="flex h-full items-center justify-center px-4 text-center text-xs font-bold text-[#6d7a75]">
-              Image preview
+              Display image preview
             </div>
           )}
         </div>
         <div className="flex flex-col justify-center">
           <input
+            id="product-images"
+            name="image"
             type="file"
             accept="image/png,image/jpeg,image/webp"
+            multiple
+            aria-invalid={Boolean(error)}
+            aria-describedby={
+              error ? "product-images-error" : "product-images-help"
+            }
             onChange={onChange}
             className="block w-full text-sm text-[#53615c] file:mr-3 file:rounded-lg file:border-0 file:bg-[#063f34] file:px-3 file:py-2 file:text-sm file:font-black file:text-white"
           />
-          <span className="mt-2 text-xs text-[#6d7a75]">
-            Upload a JPG, PNG, or WebP image up to 3MB.
+          <span
+            id="product-images-help"
+            className="mt-2 text-xs text-[#6d7a75]"
+          >
+            Upload up to 6 JPG, PNG, or WebP images. The first image becomes the
+            display image.
           </span>
-          {imageFile && (
+          {imageFiles.length > 0 && (
             <span className="mt-2 text-xs font-bold text-[#063f34]">
-              Selected: {imageFile.name}
+              Selected: {imageFiles.length} image
+              {imageFiles.length === 1 ? "" : "s"}
             </span>
+          )}
+          {previewImages.length > 1 && (
+            <div className="mt-3 grid grid-cols-5 gap-2">
+              {previewImages.slice(1, 6).map((previewImage, index) => (
+                <div
+                  key={`${previewImage}-${index}`}
+                  className="relative aspect-square overflow-hidden rounded-md bg-[#edf2ef]"
+                >
+                  <ShimmerImage
+                    src={previewImage}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-[#ba1a1a]">
+        <span
+          id="product-images-error"
+          className="mt-1 block text-xs font-semibold text-[#ba1a1a]"
+        >
           {error}
         </span>
       )}
@@ -798,6 +1106,7 @@ function ProductImageUpload({
 
 function FormInput({
   label,
+  name,
   value,
   onChange,
   error,
@@ -806,6 +1115,7 @@ function FormInput({
   className = "",
 }: {
   label: string
+  name: string
   value: string | number
   onChange: (value: string) => void
   error?: string
@@ -813,26 +1123,38 @@ function FormInput({
   type?: string
   className?: string
 }) {
+  const inputId = `product-${name}`
+  const errorId = `${inputId}-error`
+  const helpId = `${inputId}-help`
+
   return (
     <label className={className}>
       <span className="mb-1.5 block text-sm font-bold text-[#53615c]">
         {label}
       </span>
       <input
-        required
+        id={inputId}
+        name={name}
         type={type}
         value={value}
         min={type === "number" ? 0 : undefined}
         step={label === "Price" ? "0.01" : undefined}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? errorId : helper ? helpId : undefined}
         onChange={(event) => onChange(event.target.value)}
         className={`h-9 w-full rounded-lg border bg-[#fbfbf8] px-3 text-sm outline-none focus:border-[#063f34] ${error ? "border-[#ba1a1a]" : "border-[#d8dfdc]"}`}
       />
       {error ? (
-        <span className="mt-1 block text-xs font-semibold text-[#ba1a1a]">
+        <span
+          id={errorId}
+          className="mt-1 block text-xs font-semibold text-[#ba1a1a]"
+        >
           {error}
         </span>
       ) : helper ? (
-        <span className="mt-1 block text-xs text-[#6d7a75]">{helper}</span>
+        <span id={helpId} className="mt-1 block text-xs text-[#6d7a75]">
+          {helper}
+        </span>
       ) : null}
     </label>
   )
@@ -840,17 +1162,22 @@ function FormInput({
 
 function FormSelect({
   label,
+  name,
   value,
   options,
   onChange,
   error,
 }: {
   label: string
+  name: string
   value: string
   options: string[]
   onChange: (value: string) => void
   error?: string
 }) {
+  const selectId = `product-${name}`
+  const errorId = `${selectId}-error`
+
   return (
     <label>
       <span className="mb-1.5 block text-sm font-bold text-[#53615c]">
@@ -858,6 +1185,9 @@ function FormSelect({
       </span>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger
+          id={selectId}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
           className={`w-full bg-white text-[#191c1c] ${error ? "border-[#ba1a1a]" : "border-[#d8dfdc]"}`}
         >
           <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
@@ -875,7 +1205,10 @@ function FormSelect({
         </SelectContent>
       </Select>
       {error && (
-        <span className="mt-1 block text-xs font-semibold text-[#ba1a1a]">
+        <span
+          id={errorId}
+          className="mt-1 block text-xs font-semibold text-[#ba1a1a]"
+        >
           {error}
         </span>
       )}

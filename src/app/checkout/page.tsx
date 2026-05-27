@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { FormEvent, useEffect, useState } from "react"
 import {
@@ -15,6 +14,7 @@ import { toast } from "sonner"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { clearCart, type CartItem, readCart } from "@/lib/cart"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 type CheckoutForm = {
   name: string
@@ -355,7 +355,7 @@ export default function CheckoutPage() {
                         className="flex items-center gap-3 border-b border-[#d8dfdc] pb-3 last:border-0"
                       >
                         <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-[#edf2ef]">
-                          <Image
+                          <ShimmerImage
                             src={item.image}
                             alt=""
                             fill

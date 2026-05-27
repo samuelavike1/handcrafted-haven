@@ -1,8 +1,8 @@
-import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, BadgeCheck, BarChart3, PackagePlus } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
+import ShimmerImage from "@/components/ui/shimmer-image"
 import { images } from "@/lib/images"
 
 export const metadata = {
@@ -19,7 +19,7 @@ export default function SellPage() {
       <main>
         <section className="relative overflow-hidden border-b border-[#d8dfdc]">
           <div className="absolute inset-0">
-            <Image
+            <ShimmerImage
               src={images.categoryPottery}
               alt=""
               fill
