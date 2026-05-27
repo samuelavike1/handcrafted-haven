@@ -2,6 +2,7 @@ import { randomBytes, scryptSync } from "crypto"
 import { existsSync, readFileSync } from "fs"
 import { MongoClient } from "mongodb"
 
+
 if (existsSync(".env")) {
   for (const line of readFileSync(".env", "utf8").split(/\r?\n/)) {
     const match = line.match(/^([A-Z0-9_]+)=(.*)$/)
