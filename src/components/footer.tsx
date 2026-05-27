@@ -2,9 +2,22 @@ import Link from "next/link"
 import { Globe2, Leaf, Mail, Share2, ShieldCheck } from "lucide-react"
 
 const columns = {
-  Marketplace: ["Browse", "New Arrivals", "Gift Guide", "Artisans"],
-  Community: ["Stories", "Sustainability", "Reviews", "Workshops"],
-  Support: ["Help Center", "Shipping", "Returns", "Privacy Policy"],
+  Marketplace: [
+    { label: "Browse", href: "/browse" },
+    { label: "Cart", href: "/cart" },
+    { label: "Checkout", href: "/checkout" },
+    { label: "Sell", href: "/sell" },
+  ],
+  Community: [
+    { label: "Stories", href: "/stories" },
+    { label: "Seller login", href: "/sell/login" },
+    { label: "Seller registration", href: "/sell/register" },
+  ],
+  Account: [
+    { label: "Buyer sign in", href: "/login" },
+    { label: "Create account", href: "/register" },
+    { label: "My account", href: "/account" },
+  ],
 }
 
 interface FooterProps {
@@ -84,12 +97,14 @@ export default function Footer({ variant = "default" }: FooterProps) {
               </h3>
               <ul className="space-y-3">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.href}>
                     <Link
                       href={`/${link.toLowerCase().replaceAll(" ", "-")}`}
                       className="text-sm text-hh-muted transition hover:text-hh-heading"
+                      href={link.href}
+                      className="text-sm text-[#53615c] transition hover:text-[#063f34] focus:ring-4 focus:ring-[#063f34]/10 focus:outline-none"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}

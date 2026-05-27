@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowRight,
@@ -19,6 +18,7 @@ import {
   storyPosts,
 } from "@/lib/market-data"
 import { images } from "@/lib/images"
+import ShimmerImage from "@/components/ui/shimmer-image"
 
 const featuredProducts = products.slice(0, 4)
 
@@ -30,7 +30,7 @@ export default function HomePage() {
       <main>
         <section className="relative overflow-hidden">
           <div className="absolute inset-0">
-            <Image
+            <ShimmerImage
               src={images.heroArtisan}
               alt=""
               fill
@@ -89,7 +89,7 @@ export default function HomePage() {
             <div className="hidden rounded-lg border border-white/20 bg-white/16 p-2.5 shadow-2xl backdrop-blur-xl lg:block">
               <div className="rounded-lg bg-[#fbfbf8] p-2.5">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-md">
-                  <Image
+                  <ShimmerImage
                     src={products[0].image}
                     alt={products[0].name}
                     fill
@@ -160,7 +160,7 @@ export default function HomePage() {
                   index === 0 ? "md:col-span-2" : ""
                 }`}
               >
-                <Image
+                <ShimmerImage
                   src={category.image}
                   alt={category.name}
                   fill
@@ -191,16 +191,18 @@ export default function HomePage() {
                   Handpicked pieces with provenance.
                 </h2>
               </div>
-              <div className="relative w-full sm:w-[320px]">
+              <form action="/browse" className="relative w-full sm:w-[320px]">
                 <Search
                   className="absolute top-1/2 left-4 -translate-y-1/2 text-hh-muted"
                   size={18}
                 />
                 <input
                   className="h-9 w-full rounded-lg border border-hh-border bg-hh-card pr-4 pl-12 text-sm outline-none"
+                  name="q"
+                  className="h-9 w-full rounded-lg border border-[#d8dfdc] bg-white pr-4 pl-12 text-sm outline-none"
                   placeholder="Search vases, throws, trays..."
                 />
-              </div>
+              </form>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -214,7 +216,7 @@ export default function HomePage() {
         <section className="mx-auto grid max-w-[1080px] gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div className="overflow-hidden rounded-lg bg-[#063f34] text-white">
             <div className="relative h-36">
-              <Image
+              <ShimmerImage
                 src={featuredSeller.cover}
                 alt={featuredSeller.name}
                 fill
@@ -225,7 +227,7 @@ export default function HomePage() {
             <div className="p-4">
               <div className="mb-4 flex items-center gap-3">
                 <div className="relative h-12 w-12 overflow-hidden rounded-lg border-4 border-white">
-                  <Image
+                  <ShimmerImage
                     src={featuredSeller.avatar}
                     alt=""
                     fill
@@ -277,7 +279,7 @@ export default function HomePage() {
               href="/sell"
               className="mt-5 inline-flex w-fit items-center rounded-md bg-[#063f34] px-4 py-2 text-sm font-black text-white"
             >
-              Visit seller dashboard <ArrowRight className="ml-2" size={18} />
+              Start selling <ArrowRight className="ml-2" size={18} />
             </Link>
           </div>
         </section>
@@ -308,7 +310,7 @@ export default function HomePage() {
                   className="group overflow-hidden rounded-lg border border-hh-border bg-hh-canvas"
                 >
                   <div className="relative h-36 overflow-hidden">
-                    <Image
+                    <ShimmerImage
                       src={story.image}
                       alt={story.title}
                       fill

@@ -1,9 +1,10 @@
 import { Metadata } from "next"
-import { ChevronDown, SlidersHorizontal, Sparkles, Star } from "lucide-react"
+import { Sparkles, Star } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
-import ProductCard from "@/components/product-card"
-import { categories, products } from "@/lib/market-data"
+import ProductCatalogClient from "@/components/product-catalog-client"
+import { getProducts } from "@/lib/server-products"
+import { products as fallbackProducts } from "@/lib/market-data"
 
 export const metadata: Metadata = {
   title: "Browse Handmade Goods | Handcrafted Haven",
@@ -11,10 +12,30 @@ export const metadata: Metadata = {
     "Explore handcrafted ceramics, textiles, woodwork, jewelry, and sustainable artisan goods.",
 }
 
-const priceRanges = ["Under $50", "$50 - $100", "$100 - $200", "$200+"]
-const values = ["Sustainable", "Made locally", "Giftable", "Customizable"]
+const categoryBySlug: Record<string, string> = {
+  ceramics: "Ceramics",
+  textiles: "Textiles",
+  woodwork: "Woodwork",
+  jewelry: "Jewelry",
+}
 
-export default function BrowsePage() {
+interface BrowsePageProps {
+  searchParams: Promise<{ category?: string; q?: string }>
+}
+
+export default async function BrowsePage({ searchParams }: BrowsePageProps) {
+  const params = await searchParams
+  const productResult = await getProducts()
+    .then((items) => ({ products: items, dataNotice: "" }))
+    .catch(() => ({
+      products: fallbackProducts,
+      dataNotice:
+        "Showing starter products because the MongoDB product database is unavailable.",
+    }))
+  const initialCategory = params.category
+    ? (categoryBySlug[params.category] ?? "All crafts")
+    : "All crafts"
+
   return (
     <div className="min-h-screen bg-[#fbfbf8]">
       <Navbar />
@@ -146,6 +167,12 @@ export default function BrowsePage() {
             </div>
           </section>
         </div>
+        <ProductCatalogClient
+          products={productResult.products}
+          initialCategory={initialCategory}
+          initialQuery={params.q ?? ""}
+          dataNotice={productResult.dataNotice}
+        />
       </main>
 
       <Footer variant="catalog" />
