@@ -91,6 +91,16 @@
     --radius-2xl: 9999px;
     --radius-full: 9999px;
 
+    /* Semantic theme-responsive tokens */
+    --color-hh-canvas: var(--hh-canvas);
+    --color-hh-surface: var(--hh-surface);
+    --color-hh-subtle: var(--hh-subtle);
+    --color-hh-card: var(--hh-card);
+    --color-hh-heading: var(--hh-heading);
+    --color-hh-body: var(--hh-body);
+    --color-hh-muted: var(--hh-muted);
+    --color-hh-border: var(--hh-border);
+
 }
 
 :root {
@@ -123,6 +133,30 @@
     --sidebar-ring: #0b5345;
 }
 
+/* Handcrafted Haven semantic tokens — light */
+:root {
+    --hh-canvas: #fbfbf8;
+    --hh-surface: #f0f3ef;
+    --hh-subtle: #edf2ef;
+    --hh-card: #ffffff;
+    --hh-heading: #063f34;
+    --hh-body: #1b211f;
+    --hh-muted: #53615c;
+    --hh-border: #d8dfdc;
+}
+
+/* Dark mode overrides */
+.dark {
+    --hh-canvas: #111413;
+    --hh-surface: #171c1a;
+    --hh-subtle: #1d2421;
+    --hh-card: #1c211f;
+    --hh-heading: #9dd4c4;
+    --hh-body: #c8d5d0;
+    --hh-muted: #7b9590;
+    --hh-border: #262e2b;
+}
+
 @layer base {
     * {
         @apply border-border outline-ring/50;
@@ -130,8 +164,8 @@
     }
 
     body {
-        background-color: #f8f9f9;
-        color: #191c1c;
+        background-color: var(--hh-canvas);
+        color: var(--hh-body);
         font-family: "Plus Jakarta Sans", sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -145,7 +179,7 @@
     h1, h2, h3, h4, h5, h6 {
         font-family: "Plus Jakarta Sans", sans-serif;
         font-weight: 600;
-        color: #003a2f;
+        color: var(--hh-heading);
         letter-spacing: 0;
     }
 }

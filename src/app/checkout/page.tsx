@@ -144,7 +144,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
+    <div className="min-h-screen bg-hh-canvas">
       <Navbar />
 
       <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
@@ -237,12 +237,12 @@ export default function CheckoutPage() {
             className="grid gap-4 lg:grid-cols-[1fr_300px]"
           >
             <section className="space-y-5">
-              <div className="rounded-lg border border-[#d8dfdc] bg-white p-4">
+              <div className="rounded-lg border border-hh-border bg-hh-card p-4">
                 <div className="mb-4 flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#063f34] text-sm font-black text-white">
                     1
                   </span>
-                  <h2 className="text-lg font-black text-[#063f34]">
+                  <h2 className="text-lg font-black text-hh-heading">
                     Shipping address
                   </h2>
                 </div>
@@ -272,19 +272,19 @@ export default function CheckoutPage() {
                             event.target.value
                           )
                         }
-                        className="h-9 w-full rounded-lg border border-[#d8dfdc] bg-[#fbfbf8] px-3 outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/10"
+                        className="h-9 w-full rounded-lg border border-hh-border bg-hh-card px-3 outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/10"
                       />
                     </label>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-lg border border-[#d8dfdc] bg-white p-4">
+              <div className="rounded-lg border border-hh-border bg-hh-card p-4">
                 <div className="mb-4 flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#063f34] text-sm font-black text-white">
                     2
                   </span>
-                  <h2 className="text-lg font-black text-[#063f34]">
+                  <h2 className="text-lg font-black text-hh-heading">
                     Payment method
                   </h2>
                 </div>
@@ -299,8 +299,8 @@ export default function CheckoutPage() {
                   }}
                   className={`w-full rounded-lg border-2 p-4 text-left ${
                     paymentMethod === "card"
-                      ? "border-[#063f34] bg-[#f6faf8]"
-                      : "border-[#d8dfdc] bg-white"
+                      ? "border-[#063f34] bg-hh-subtle"
+                      : "border-hh-border bg-hh-card"
                   }`}
                 >
                   <div className="flex items-center gap-3 font-black text-[#063f34]">
@@ -308,19 +308,19 @@ export default function CheckoutPage() {
                   </div>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <input
-                      className="h-9 rounded-lg border border-[#d8dfdc] bg-white px-3 outline-none sm:col-span-2"
+                      className="h-9 rounded-lg border border-hh-border bg-hh-canvas px-3 outline-none sm:col-span-2"
                       placeholder="Cardholder name"
                     />
                     <input
-                      className="h-9 rounded-lg border border-[#d8dfdc] bg-white px-3 outline-none sm:col-span-2"
+                      className="h-9 rounded-lg border border-hh-border bg-hh-canvas px-3 outline-none sm:col-span-2"
                       placeholder="0000 0000 0000 0000"
                     />
                     <input
-                      className="h-9 rounded-lg border border-[#d8dfdc] bg-white px-3 outline-none"
+                      className="h-9 rounded-lg border border-hh-border bg-hh-canvas px-3 outline-none"
                       placeholder="MM / YY"
                     />
                     <input
-                      className="h-9 rounded-lg border border-[#d8dfdc] bg-white px-3 outline-none"
+                      className="h-9 rounded-lg border border-hh-border bg-hh-canvas px-3 outline-none"
                       placeholder="CVV"
                     />
                   </div>
@@ -330,20 +330,20 @@ export default function CheckoutPage() {
                   onClick={() => setPaymentMethod("wallet")}
                   className={`mt-3 flex w-full items-center gap-3 rounded-lg border p-4 font-bold ${
                     paymentMethod === "wallet"
-                      ? "border-[#063f34] bg-[#f6faf8] text-[#063f34]"
-                      : "border-[#d8dfdc] text-[#53615c]"
+                      ? "border-[#063f34] bg-hh-subtle text-hh-heading"
+                      : "border-hh-border text-hh-muted"
                   }`}
                 >
                   <Wallet size={20} /> Digital wallet
                 </button>
               </div>
 
-              <div className="rounded-lg border border-[#d8dfdc] bg-white p-4">
+              <div className="rounded-lg border border-hh-border bg-hh-card p-4">
                 <div className="mb-4 flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#063f34] text-sm font-black text-white">
                     3
                   </span>
-                  <h2 className="text-lg font-black text-[#063f34]">
+                  <h2 className="text-lg font-black text-hh-heading">
                     Review order
                   </h2>
                 </div>
@@ -352,9 +352,9 @@ export default function CheckoutPage() {
                     items.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 border-b border-[#d8dfdc] pb-3 last:border-0"
+                        className="flex items-center gap-3 border-b border-hh-border pb-3 last:border-0"
                       >
-                        <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-[#edf2ef]">
+                        <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-hh-subtle">
                           <ShimmerImage
                             src={item.image}
                             alt=""
@@ -364,10 +364,10 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div className="flex-1">
-                          <p className="font-black text-[#063f34]">
+                          <p className="font-black text-hh-heading">
                             {item.name}
                           </p>
-                          <p className="text-sm text-[#53615c]">
+                          <p className="text-sm text-hh-muted">
                             Qty {item.quantity}
                             {item.seller ? ` · ${item.seller}` : ""}
                           </p>

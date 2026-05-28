@@ -40,18 +40,18 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   ].filter(Boolean)
 
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
+    <div className="min-h-screen bg-hh-canvas">
       <Navbar />
 
       <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
-        <nav className="mb-4 text-sm font-semibold text-[#53615c]">
-          <Link href="/browse" className="hover:text-[#063f34]">
+        <nav className="mb-4 text-sm font-semibold text-hh-muted">
+          <Link href="/browse" className="hover:text-hh-heading">
             Browse
           </Link>
           <span className="mx-2">/</span>
           <span>{product.category}</span>
           <span className="mx-2">/</span>
-          <span className="text-[#063f34]">{product.name}</span>
+          <span className="text-hh-heading">{product.name}</span>
         </nav>
 
         <section className="grid gap-5 lg:grid-cols-[0.9fr_1fr]">
@@ -77,7 +77,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             <h1 className="max-w-2xl text-2xl font-black tracking-tight text-[#063f34] sm:text-3xl">
               {product.name}
             </h1>
-            <p className="mt-2 text-sm text-[#53615c]">
+            <p className="mt-2 text-sm text-hh-muted">
               by{" "}
               <Link href="/sell" className="font-bold text-[#9a4d10]">
                 {product.seller}
@@ -86,10 +86,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </p>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <p className="text-2xl font-black text-[#1b211f]">
+              <p className="text-2xl font-black text-hh-body">
                 ${product.price.toFixed(2)}
               </p>
-              <p className="flex items-center gap-1 rounded-lg border border-[#d8dfdc] bg-white px-3 py-1.5 text-xs font-bold">
+              <p className="flex items-center gap-1 rounded-lg border border-hh-border bg-hh-card px-3 py-1.5 text-xs font-bold">
                 <Star size={16} className="fill-[#c8651b] text-[#c8651b]" />{" "}
                 {product.rating} · {product.reviews} reviews
               </p>
@@ -100,7 +100,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               )}
             </div>
 
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#53615c]">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-hh-muted">
               {product.description}
             </p>
 
@@ -108,7 +108,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               {materials.slice(0, 4).map((item) => (
                 <div
                   key={item}
-                  className="rounded-lg border border-[#d8dfdc] bg-white px-3 py-2 text-xs font-bold text-[#25332e]"
+                  className="rounded-lg border border-hh-border bg-hh-card px-3 py-2 text-xs font-bold text-hh-body"
                 >
                   {item}
                 </div>
@@ -130,7 +130,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               variant="actions"
             />
 
-            <div className="mt-4 grid gap-2 text-xs font-semibold text-[#53615c] sm:grid-cols-3">
+            <div className="mt-4 grid gap-2 text-xs font-semibold text-hh-muted sm:grid-cols-3">
               <span className="flex items-center gap-2">
                 <Truck size={17} className="text-[#063f34]" /> Plastic-free
                 shipping
@@ -147,22 +147,22 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </section>
 
-        <section className="mt-8 grid gap-4 border-t border-[#d8dfdc] pt-6 lg:grid-cols-[240px_1fr]">
+        <section className="mt-8 grid gap-4 border-t border-hh-border pt-6 lg:grid-cols-[240px_1fr]">
           <div>
             <p className="text-xs font-black text-[#9a4d10] uppercase">
               Reviews and ratings
             </p>
-            <h2 className="mt-2 text-2xl font-black text-[#063f34]">
+            <h2 className="mt-2 text-2xl font-black text-hh-heading">
               Loved by collectors.
             </h2>
-            <div className="mt-5 rounded-lg bg-white p-4">
+            <div className="mt-5 rounded-lg bg-hh-card p-4">
               <p className="text-2xl font-black">{product.rating}</p>
               <p className="mt-2 flex text-[#c8651b]">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} size={20} fill="currentColor" />
                 ))}
               </p>
-              <p className="mt-2 text-sm text-[#53615c]">
+              <p className="mt-2 text-sm text-hh-muted">
                 Based on {product.reviews} written reviews
               </p>
             </div>
@@ -172,11 +172,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             {reviewItems.map((review) => (
               <article
                 key={review.id}
-                className="rounded-lg border border-[#d8dfdc] bg-white p-4"
+                className="rounded-lg border border-hh-border bg-hh-card p-4"
               >
                 <div className="flex justify-between gap-4">
                   <div>
-                    <p className="font-black text-[#063f34]">{review.author}</p>
+                    <p className="font-black text-hh-heading">{review.author}</p>
                     <p className="mt-1 flex text-[#c8651b]">
                       {Array.from({ length: Math.round(review.rating) }).map(
                         (_, index) => (
@@ -185,17 +185,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                       )}
                     </p>
                   </div>
-                  <p className="text-sm text-[#6d7a75]">
+                  <p className="text-sm text-hh-muted">
                     {formatDate(review.createdAt)}
                   </p>
                 </div>
-                <h3 className="mt-4 text-lg font-black text-[#1b211f]">
-                  {review.title}
-                </h3>
-                <p className="mt-2 leading-relaxed text-[#53615c]">
+                <p className="mt-2 leading-relaxed text-hh-muted">
                   {review.comment}
                 </p>
-                <button className="mt-4 flex items-center gap-2 text-sm font-bold text-[#53615c]">
+                <button className="mt-4 flex items-center gap-2 text-sm font-bold text-hh-muted">
                   <MessageSquare size={16} /> Comment
                 </button>
               </article>
@@ -209,11 +206,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               <p className="text-xs font-black text-[#9a4d10] uppercase">
                 More to discover
               </p>
-              <h2 className="text-2xl font-black text-[#063f34]">
+              <h2 className="text-2xl font-black text-hh-heading">
                 Related handcrafted pieces
               </h2>
             </div>
-            <Link href="/browse" className="font-black text-[#063f34]">
+            <Link href="/browse" className="font-black text-hh-heading">
               View all
             </Link>
           </div>
