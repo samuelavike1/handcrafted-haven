@@ -1,0 +1,167 @@
+{
+  "common": {
+    "by": "by",
+    "view": "View",
+    "saveToCollection": "Save to collection",
+    "removeFromCollection": "Remove from collection"
+  },
+  "navbar": {
+    "browse": "Browse",
+    "sell": "Sell",
+    "stories": "Stories",
+    "searchPlaceholder": "Search handmade goods...",
+    "searchPlaceholderSell": "Search listings, orders...",
+    "noNotifications": "No new notifications",
+    "marketplaceAlerts": "Marketplace alerts will appear here.",
+    "signedOut": "Signed out",
+    "signedOutDesc": "You have been signed out of Handcrafted Haven.",
+    "dashboard": "Dashboard",
+    "sellerStudio": "Seller studio",
+    "admin": "Admin",
+    "signOut": "Sign out",
+    "myAccount": "My account",
+    "signIn": "Sign in"
+  },
+  "footer": {
+    "sustainably": "Sustainably sourced",
+    "sustainablyDesc": "Materials and makers are reviewed for responsible practices.",
+    "artisan": "Artisan verified",
+    "artisanDesc": "Profiles, workshops, and listings are curated for authenticity.",
+    "community": "Community powered",
+    "communityDesc": "Every purchase supports independent craft and local economies.",
+    "tagline": "A curated marketplace for soulful objects, transparent maker stories, and sustainable consumption.",
+    "copyright": "© 2026 Handcrafted Haven. Rooted in craftsmanship.",
+    "marketplace": "Marketplace",
+    "communitySection": "Community",
+    "account": "Account",
+    "links": {
+      "browse": "Browse",
+      "cart": "Cart",
+      "checkout": "Checkout",
+      "sell": "Sell",
+      "stories": "Stories",
+      "sellerLogin": "Seller login",
+      "sellerRegistration": "Seller registration",
+      "buyerSignIn": "Buyer sign in",
+      "createAccount": "Create account",
+      "myAccount": "My account"
+    }
+  },
+  "home": {
+    "heroBadge": "Curated handmade goods from verified artisans",
+    "heroTitle": "Objects with soul, made by real hands.",
+    "heroDesc": "Discover ceramics, textiles, woodwork, jewelry, and custom pieces from independent makers who value craft, story, and sustainability.",
+    "exploreBtn": "Explore the marketplace",
+    "sellBtn": "Open a seller studio",
+    "rating": "average rating",
+    "listings": "artisan listings",
+    "shipping": "plastic-free shipping",
+    "featuredDrop": "Featured drop",
+    "viewPiece": "View piece",
+    "shopByCraft": "Shop by craft",
+    "findHandmade": "Find the right kind of handmade.",
+    "browseAll": "Browse all categories",
+    "collectorFav": "Collector favorites",
+    "handpicked": "Handpicked pieces with provenance.",
+    "searchPlaceholder": "Search vases, throws, trays...",
+    "sellerProfiles": "Seller profiles",
+    "sellerTitle": "Give artisans a studio, not just a storefront.",
+    "sellerDesc": "Sellers can tell their story, publish detailed product listings, build trust through reviews, and connect with customers who care about materials, origin, and process.",
+    "dedicatedProfiles": "Dedicated profiles",
+    "verifiedCraft": "Verified craft",
+    "secureCom": "Secure commerce",
+    "startSelling": "Start selling",
+    "commJournal": "Community journal",
+    "storiesTitle": "Stories behind the work.",
+    "readAll": "Read all stories"
+  },
+  "categories": {
+    "ceramics": {
+      "name": "Ceramics",
+      "count": "1,240 pieces",
+      "description": "Wheel-thrown vessels, tableware, and sculptural clay."
+    },
+    "textiles": {
+      "name": "Textiles",
+      "count": "614 pieces",
+      "description": "Woven throws, linen goods, natural dyes, and heirloom cloth."
+    },
+    "woodwork": {
+      "name": "Woodwork",
+      "count": "832 pieces",
+      "description": "Live-edge boards, carved objects, furniture, and home goods."
+    },
+    "jewelry": {
+      "name": "Jewelry",
+      "count": "480 pieces",
+      "description": "Small-batch metalwork, gemstones, and wearable keepsakes."
+    }
+  },
+  "products": {
+    "moonlight-vase": {
+      "name": "Moonlight Speckled Vase",
+      "description": "A tactile stoneware vase with iron-rich speckling and a satin glaze, made in small batches for collectors who value quiet, sculptural forms.",
+      "badge": "Editor pick",
+      "material": "Stoneware",
+      "category": "Ceramics"
+    },
+    "organic-cloud-throw": {
+      "name": "Organic Cloud Throw",
+      "description": "A handwoven throw with generous texture, made from organic cotton and finished by a family-run textile studio.",
+      "badge": "Best seller",
+      "material": "Organic cotton",
+      "category": "Textiles"
+    },
+    "walnut-board": {
+      "name": "Live-Edge Walnut Board",
+      "description": "A polished live-edge serving board shaped from reclaimed walnut and finished with food-safe oil.",
+      "badge": "Limited run",
+      "material": "Reclaimed walnut",
+      "category": "Woodwork"
+    },
+    "nordic-teapot": {
+      "name": "Nordic Drip Teapot",
+      "description": "A luminous glazed teapot with a woven bamboo handle and a compact profile for daily rituals.",
+      "badge": "New",
+      "material": "Porcelain",
+      "category": "Ceramics"
+    },
+    "hammered-cuff": {
+      "name": "Hammered Copper Cuff",
+      "description": "A hand-hammered copper cuff with an organic edge and warm patina that deepens over time.",
+      "badge": "Giftable",
+      "material": "Recycled copper",
+      "category": "Jewelry"
+    },
+    "linen-napkin-set": {
+      "name": "Pure Linen Napkin Set",
+      "description": "A set of four soft linen napkins, cut and sewn in-house with a hand-dyed sage finish.",
+      "badge": "Sustainable",
+      "material": "European flax linen",
+      "category": "Textiles"
+    }
+  },
+  "stories": {
+    "elena-rossi-studio": {
+      "title": "Elena Rossi on the Poetry of Clay",
+      "excerpt": "Inside a hillside studio where clay, mineral glazes, and old-world firing traditions become everyday vessels.",
+      "category": "Maker Story",
+      "readTime": "6 min read"
+    },
+    "arlo-finch-woodworking": {
+      "title": "Where Trees Become Tables",
+      "excerpt": "A Vermont woodworker explains how salvaged walnut becomes heirloom boards and furniture with visible history.",
+      "category": "Behind the Craft",
+      "readTime": "8 min read"
+    },
+    "heritage-weaves-story": {
+      "title": "The Slow Textile Movement",
+      "excerpt": "Heritage Weaves is proving that soft goods can be luxurious, traceable, and responsibly made.",
+      "category": "Sustainability",
+      "readTime": "5 min read"
+    }
+  },
+  "featuredSeller": {
+    "story": "Founded in the heart of the red rocks, Earth & Ember is a celebration of desert clay, patient hands, and functional objects that carry a sense of place."
+  }
+}

@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter } from "@/i18n/navigation"
+import { Link } from "@/i18n/navigation"
 import { FormEvent, useEffect, useState } from "react"
 import {
   Bell,
@@ -18,10 +18,12 @@ import {
   X,
 } from "lucide-react"
 import { useTheme } from "next-themes"
+import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import appLogo from "../../Logo.jpg"
 import { cartUpdatedEvent, readCart } from "@/lib/cart"
 import ShimmerImage from "@/components/ui/shimmer-image"
+import LanguageSwitcher from "@/components/language-switcher"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,12 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-const navItems = [
-  { label: "Browse", href: "/browse" },
-  { label: "Sell", href: "/sell" },
-  { label: "Stories", href: "/stories" },
-]
 
 type CurrentUser = {
   name: string
@@ -48,11 +44,12 @@ const dashboardHref = {
   buyer: "/account",
   seller: "/sell/dashboard",
   admin: "/admin",
-}
+} as const
 
 export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
+  const t = useTranslations("navbar")
   const [mobileOpen, setMobileOpen] = useState(false)
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -61,6 +58,12 @@ export default function Navbar() {
   const [user, setUser] = useState<CurrentUser | null>(null)
   const [search, setSearch] = useState("")
   const [cartCount, setCartCount] = useState(0)
+
+  const navItems = [
+    { label: t("browse"), href: "/browse" },
+    { label: t("sell"), href: "/sell" },
+    { label: t("stories"), href: "/stories" },
+  ]
 
   useEffect(() => {
     let active = true
@@ -106,10 +109,10 @@ export default function Navbar() {
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" })
     setUser(null)
-    toast.success("Signed out", {
-      description: "You have been signed out of Handcrafted Haven.",
+    toast.success(t("signedOut"), {
+      description: t("signedOutDesc"),
     })
-    window.location.href = "/"
+    router.replace("/")
   }
 
   return (
@@ -166,8 +169,8 @@ export default function Navbar() {
             onChange={(event) => setSearch(event.target.value)}
             placeholder={
               pathname === "/sell"
-                ? "Search listings, orders..."
-                : "Search handmade goods..."
+                ? t("searchPlaceholderSell")
+                : t("searchPlaceholder")
             }
           />
         </form>
@@ -194,8 +197,8 @@ export default function Navbar() {
           <button
             className="hidden h-8 w-8 items-center justify-center rounded-md text-hh-heading transition hover:bg-hh-subtle sm:flex"
             onClick={() =>
-              toast.info("No new notifications", {
-                description: "Marketplace alerts will appear here.",
+              toast.info(t("noNotifications"), {
+                description: t("marketplaceAlerts"),
               })
             }
             aria-label="Notifications"
@@ -203,12 +206,21 @@ export default function Navbar() {
             <Bell size={18} />
           </button>
           <button
-            onClick={() => mounted && setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            onClick={() =>
+              mounted && setTheme(resolvedTheme === "dark" ? "light" : "dark")
+            }
             className="flex h-8 w-8 items-center justify-center rounded-md text-hh-heading transition hover:bg-hh-subtle"
             aria-label="Toggle theme"
           >
-            {mounted && resolvedTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            {mounted && resolvedTheme === "dark" ? (
+              <Sun size={18} />
+            ) : (
+              <Moon size={18} />
+            )}
           </button>
+
+          <LanguageSwitcher />
+
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -233,14 +245,14 @@ export default function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link href={dashboardHref[user.role]}>
                     <LayoutDashboard size={15} />
-                    Dashboard
+                    {t("dashboard")}
                   </Link>
                 </DropdownMenuItem>
                 {user.role === "seller" && (
                   <DropdownMenuItem asChild>
                     <Link href="/sell/dashboard">
                       <Store size={15} />
-                      Seller studio
+                      {t("sellerStudio")}
                     </Link>
                   </DropdownMenuItem>
                 )}
@@ -248,14 +260,14 @@ export default function Navbar() {
                   <DropdownMenuItem asChild>
                     <Link href="/admin">
                       <ShieldCheck size={15} />
-                      Admin
+                      {t("admin")}
                     </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} variant="destructive">
                   <LogOut size={15} />
-                  Sign out
+                  {t("signOut")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -265,7 +277,7 @@ export default function Navbar() {
               className="hidden h-8 items-center justify-center gap-1.5 rounded-md border border-[#d8dfdc] px-3 text-xs font-black text-[#063f34] transition hover:bg-[#edf2ef] sm:flex"
             >
               <UserRound size={15} />
-              Sign in
+              {t("signIn")}
             </Link>
           )}
           <button
@@ -289,7 +301,7 @@ export default function Navbar() {
               className="h-9 w-full rounded-md border border-hh-border bg-hh-card pr-3 pl-9 text-sm outline-none"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search handmade goods..."
+              placeholder={t("searchPlaceholder")}
             />
           </form>
           <div className="grid gap-2">
@@ -308,7 +320,7 @@ export default function Navbar() {
               className="rounded-md px-3 py-2 text-sm font-semibold text-[#063f34] hover:bg-[#edf2ef]"
               onClick={() => setMobileOpen(false)}
             >
-              {user ? "My account" : "Sign in"}
+              {user ? t("myAccount") : t("signIn")}
             </Link>
             {user && (
               <button
@@ -318,9 +330,12 @@ export default function Navbar() {
                   logout()
                 }}
               >
-                Sign out
+                {t("signOut")}
               </button>
             )}
+            <div className="mt-1 px-3 py-2">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       )}

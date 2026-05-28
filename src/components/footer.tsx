@@ -1,51 +1,57 @@
-import Link from "next/link"
+import { getTranslations } from "next-intl/server"
+import { Link } from "@/i18n/navigation"
 import { Globe2, Leaf, Mail, Share2, ShieldCheck } from "lucide-react"
-
-const columns = {
-  Marketplace: [
-    { label: "Browse", href: "/browse" },
-    { label: "Cart", href: "/cart" },
-    { label: "Checkout", href: "/checkout" },
-    { label: "Sell", href: "/sell" },
-  ],
-  Community: [
-    { label: "Stories", href: "/stories" },
-    { label: "Seller login", href: "/sell/login" },
-    { label: "Seller registration", href: "/sell/register" },
-  ],
-  Account: [
-    { label: "Buyer sign in", href: "/login" },
-    { label: "Create account", href: "/register" },
-    { label: "My account", href: "/account" },
-  ],
-}
+import LanguageSwitcher from "@/components/language-switcher"
 
 interface FooterProps {
   variant?: "default" | "catalog" | "product"
 }
 
-export default function Footer({ variant = "default" }: FooterProps) {
+export default async function Footer({ variant = "default" }: FooterProps) {
+  const t = await getTranslations("footer")
+
+  const columns = {
+    [t("marketplace")]: [
+      { label: t("links.browse"), href: "/browse" },
+      { label: t("links.cart"), href: "/cart" },
+      { label: t("links.checkout"), href: "/checkout" },
+      { label: t("links.sell"), href: "/sell" },
+    ],
+    [t("communitySection")]: [
+      { label: t("links.stories"), href: "/stories" },
+      { label: t("links.sellerLogin"), href: "/sell/login" },
+      { label: t("links.sellerRegistration"), href: "/sell/register" },
+    ],
+    [t("account")]: [
+      { label: t("links.buyerSignIn"), href: "/login" },
+      { label: t("links.createAccount"), href: "/register" },
+      { label: t("links.myAccount"), href: "/account" },
+    ],
+  }
+
+  const trustItems = [
+    {
+      icon: Leaf,
+      label: t("sustainably"),
+      text: t("sustainablyDesc"),
+    },
+    {
+      icon: ShieldCheck,
+      label: t("artisan"),
+      text: t("artisanDesc"),
+    },
+    {
+      icon: Globe2,
+      label: t("community"),
+      text: t("communityDesc"),
+    },
+  ]
+
   return (
     <footer className="border-t border-hh-border bg-hh-surface">
       {variant === "default" && (
         <div className="mx-auto grid max-w-[1080px] gap-4 border-b border-hh-border px-4 py-6 sm:grid-cols-3 sm:px-6 lg:px-8">
-          {[
-            {
-              icon: Leaf,
-              label: "Sustainably sourced",
-              text: "Materials and makers are reviewed for responsible practices.",
-            },
-            {
-              icon: ShieldCheck,
-              label: "Artisan verified",
-              text: "Profiles, workshops, and listings are curated for authenticity.",
-            },
-            {
-              icon: Globe2,
-              label: "Community powered",
-              text: "Every purchase supports independent craft and local economies.",
-            },
-          ].map((item) => (
+          {trustItems.map((item) => (
             <div
               key={item.label}
               className="flex gap-3 rounded-lg bg-hh-card/60 p-4"
@@ -73,8 +79,7 @@ export default function Footer({ variant = "default" }: FooterProps) {
             Haven
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-hh-muted">
-            A curated marketplace for soulful objects, transparent maker
-            stories, and sustainable consumption.
+            {t("tagline")}
           </p>
           <div className="mt-5 flex gap-3">
             {[Share2, Mail, Globe2].map((Icon, index) => (
@@ -114,10 +119,8 @@ export default function Footer({ variant = "default" }: FooterProps) {
 
       <div className="border-t border-hh-border">
         <div className="mx-auto flex max-w-[1080px] flex-col gap-3 px-4 py-5 text-sm text-hh-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>© 2026 Handcrafted Haven. Rooted in craftsmanship.</p>
-          <p className="flex items-center gap-2">
-            <Globe2 size={15} /> English (USD)
-          </p>
+          <p>{t("copyright")}</p>
+          <LanguageSwitcher />
         </div>
       </div>
     </footer>
