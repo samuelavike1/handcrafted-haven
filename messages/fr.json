@@ -1,0 +1,167 @@
+{
+  "common": {
+    "by": "par",
+    "view": "Voir",
+    "saveToCollection": "Enregistrer dans la collection",
+    "removeFromCollection": "Retirer de la collection"
+  },
+  "navbar": {
+    "browse": "Parcourir",
+    "sell": "Vendre",
+    "stories": "Histoires",
+    "searchPlaceholder": "Rechercher des produits artisanaux...",
+    "searchPlaceholderSell": "Rechercher des annonces, commandes...",
+    "noNotifications": "Aucune nouvelle notification",
+    "marketplaceAlerts": "Les alertes de la marketplace apparaîtront ici.",
+    "signedOut": "Déconnecté",
+    "signedOutDesc": "Vous avez été déconnecté de Handcrafted Haven.",
+    "dashboard": "Tableau de bord",
+    "sellerStudio": "Studio vendeur",
+    "admin": "Administration",
+    "signOut": "Se déconnecter",
+    "myAccount": "Mon compte",
+    "signIn": "Se connecter"
+  },
+  "footer": {
+    "sustainably": "Approvisionnement durable",
+    "sustainablyDesc": "Les matériaux et fabricants sont examinés pour des pratiques responsables.",
+    "artisan": "Artisan vérifié",
+    "artisanDesc": "Profils, ateliers et annonces sélectionnés pour leur authenticité.",
+    "community": "Porté par la communauté",
+    "communityDesc": "Chaque achat soutient l'artisanat indépendant et les économies locales.",
+    "tagline": "Une marketplace d'objets avec âme, d'histoires transparentes et de consommation durable.",
+    "copyright": "© 2026 Handcrafted Haven. Enraciné dans l'artisanat.",
+    "marketplace": "Marketplace",
+    "communitySection": "Communauté",
+    "account": "Compte",
+    "links": {
+      "browse": "Parcourir",
+      "cart": "Panier",
+      "checkout": "Commander",
+      "sell": "Vendre",
+      "stories": "Histoires",
+      "sellerLogin": "Connexion vendeur",
+      "sellerRegistration": "Inscription vendeur",
+      "buyerSignIn": "Connexion acheteur",
+      "createAccount": "Créer un compte",
+      "myAccount": "Mon compte"
+    }
+  },
+  "home": {
+    "heroBadge": "Produits artisanaux sélectionnés d'artisans vérifiés",
+    "heroTitle": "Des objets avec âme, faits par de vraies mains.",
+    "heroDesc": "Découvrez la céramique, les textiles, la menuiserie, la bijouterie et des pièces personnalisées de créateurs indépendants qui valorisent le savoir-faire, l'histoire et la durabilité.",
+    "exploreBtn": "Explorer la marketplace",
+    "sellBtn": "Ouvrir un studio vendeur",
+    "rating": "note moyenne",
+    "listings": "annonces d'artisans",
+    "shipping": "livraison sans plastique",
+    "featuredDrop": "À la une",
+    "viewPiece": "Voir la pièce",
+    "shopByCraft": "Acheter par métier",
+    "findHandmade": "Trouvez le bon type d'artisanat.",
+    "browseAll": "Voir toutes les catégories",
+    "collectorFav": "Favoris des collectionneurs",
+    "handpicked": "Pièces sélectionnées avec provenance.",
+    "searchPlaceholder": "Rechercher vases, plaids, plateaux...",
+    "sellerProfiles": "Profils vendeurs",
+    "sellerTitle": "Donnez aux artisans un studio, pas seulement une vitrine.",
+    "sellerDesc": "Les vendeurs peuvent raconter leur histoire, publier des fiches détaillées, créer de la confiance grâce aux avis et se connecter avec des clients soucieux des matériaux, de l'origine et du processus.",
+    "dedicatedProfiles": "Profils dédiés",
+    "verifiedCraft": "Artisanat vérifié",
+    "secureCom": "Commerce sécurisé",
+    "startSelling": "Commencer à vendre",
+    "commJournal": "Journal de la communauté",
+    "storiesTitle": "Les histoires derrière le travail.",
+    "readAll": "Lire toutes les histoires"
+  },
+  "categories": {
+    "ceramics": {
+      "name": "Céramiques",
+      "count": "1 240 pièces",
+      "description": "Poteries tournées, vaisselle et argile sculpturale."
+    },
+    "textiles": {
+      "name": "Textiles",
+      "count": "614 pièces",
+      "description": "Plaids tissés, lin, teintures naturelles et tissus précieux."
+    },
+    "woodwork": {
+      "name": "Menuiserie",
+      "count": "832 pièces",
+      "description": "Planches à tranche vive, objets sculptés, mobilier et articles de maison."
+    },
+    "jewelry": {
+      "name": "Bijouterie",
+      "count": "480 pièces",
+      "description": "Métal en petites séries, pierres précieuses et souvenirs portables."
+    }
+  },
+  "products": {
+    "moonlight-vase": {
+      "name": "Vase Tacheté Clair de Lune",
+      "description": "Un vase en grès tactile avec des taches riches en fer et un vernis satiné, fabriqué en petites séries pour les collectionneurs.",
+      "badge": "Choix de l'éditeur",
+      "material": "Grès",
+      "category": "Céramiques"
+    },
+    "organic-cloud-throw": {
+      "name": "Plaid Nuage Organique",
+      "description": "Un plaid tissé à la main en coton biologique, fini par un studio textile familial.",
+      "badge": "Meilleures ventes",
+      "material": "Coton biologique",
+      "category": "Textiles"
+    },
+    "walnut-board": {
+      "name": "Planche en Noyer à Tranche Vive",
+      "description": "Une planche de service à tranche vive en noyer récupéré, finie à l'huile alimentaire.",
+      "badge": "Série limitée",
+      "material": "Noyer récupéré",
+      "category": "Menuiserie"
+    },
+    "nordic-teapot": {
+      "name": "Théière Nordique Goutte-à-Goutte",
+      "description": "Une théière émaillée lumineuse avec une anse en bambou tressé pour les rituels quotidiens.",
+      "badge": "Nouveau",
+      "material": "Porcelaine",
+      "category": "Céramiques"
+    },
+    "hammered-cuff": {
+      "name": "Bracelet en Cuivre Martelé",
+      "description": "Un bracelet en cuivre martelé à la main avec une patine chaude qui s'approfondit avec le temps.",
+      "badge": "Cadeau idéal",
+      "material": "Cuivre recyclé",
+      "category": "Bijouterie"
+    },
+    "linen-napkin-set": {
+      "name": "Ensemble de Serviettes en Lin Pur",
+      "description": "Quatre serviettes en lin cousues en atelier avec une finition sauge teinte à la main.",
+      "badge": "Durable",
+      "material": "Lin européen",
+      "category": "Textiles"
+    }
+  },
+  "stories": {
+    "elena-rossi-studio": {
+      "title": "Elena Rossi sur la Poésie de l'Argile",
+      "excerpt": "Dans un atelier de colline où l'argile et les émaux minéraux deviennent des ustensiles du quotidien.",
+      "category": "Histoire d'artisan",
+      "readTime": "6 min de lecture"
+    },
+    "arlo-finch-woodworking": {
+      "title": "Là où les Arbres Deviennent des Tables",
+      "excerpt": "Un menuisier du Vermont explique comment le noyer récupéré devient des meubles à l'histoire visible.",
+      "category": "Derrière l'artisanat",
+      "readTime": "8 min de lecture"
+    },
+    "heritage-weaves-story": {
+      "title": "Le Mouvement du Textile Lent",
+      "excerpt": "Heritage Weaves prouve que les produits souples peuvent être luxueux, traçables et responsables.",
+      "category": "Durabilité",
+      "readTime": "5 min de lecture"
+    }
+  },
+  "featuredSeller": {
+    "story": "Fondé au cœur des roches rouges, Earth & Ember célèbre l'argile du désert, les mains patientes et les objets fonctionnels qui portent un sens du lieu."
+  }
+}

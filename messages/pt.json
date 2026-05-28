@@ -1,0 +1,167 @@
+{
+  "common": {
+    "by": "por",
+    "view": "Ver",
+    "saveToCollection": "Salvar na coleção",
+    "removeFromCollection": "Remover da coleção"
+  },
+  "navbar": {
+    "browse": "Explorar",
+    "sell": "Vender",
+    "stories": "Histórias",
+    "searchPlaceholder": "Buscar produtos artesanais...",
+    "searchPlaceholderSell": "Buscar anúncios, pedidos...",
+    "noNotifications": "Sem novas notificações",
+    "marketplaceAlerts": "Alertas do marketplace aparecerão aqui.",
+    "signedOut": "Sessão encerrada",
+    "signedOutDesc": "Você foi desconectado do Handcrafted Haven.",
+    "dashboard": "Painel",
+    "sellerStudio": "Estúdio do vendedor",
+    "admin": "Administração",
+    "signOut": "Sair",
+    "myAccount": "Minha conta",
+    "signIn": "Entrar"
+  },
+  "footer": {
+    "sustainably": "Abastecimento sustentável",
+    "sustainablyDesc": "Materiais e fabricantes são avaliados por práticas responsáveis.",
+    "artisan": "Artesão verificado",
+    "artisanDesc": "Perfis, oficinas e anúncios selecionados por autenticidade.",
+    "community": "Movido pela comunidade",
+    "communityDesc": "Cada compra apoia o artesanato independente e as economias locais.",
+    "tagline": "Um marketplace de objetos com alma, histórias transparentes e consumo sustentável.",
+    "copyright": "© 2026 Handcrafted Haven. Enraizado na artesania.",
+    "marketplace": "Marketplace",
+    "communitySection": "Comunidade",
+    "account": "Conta",
+    "links": {
+      "browse": "Explorar",
+      "cart": "Carrinho",
+      "checkout": "Finalizar",
+      "sell": "Vender",
+      "stories": "Histórias",
+      "sellerLogin": "Login do vendedor",
+      "sellerRegistration": "Registro de vendedor",
+      "buyerSignIn": "Login do comprador",
+      "createAccount": "Criar conta",
+      "myAccount": "Minha conta"
+    }
+  },
+  "home": {
+    "heroBadge": "Produtos artesanais curados de artesãos verificados",
+    "heroTitle": "Objetos com alma, feitos por mãos reais.",
+    "heroDesc": "Descubra cerâmica, têxteis, marcenaria, joias e peças personalizadas de criadores independentes que valorizam o ofício, a história e a sustentabilidade.",
+    "exploreBtn": "Explorar o marketplace",
+    "sellBtn": "Abrir um estúdio de vendedor",
+    "rating": "avaliação média",
+    "listings": "anúncios de artesãos",
+    "shipping": "envio sem plástico",
+    "featuredDrop": "Destaque",
+    "viewPiece": "Ver peça",
+    "shopByCraft": "Comprar por ofício",
+    "findHandmade": "Encontre o tipo certo de artesanato.",
+    "browseAll": "Ver todas as categorias",
+    "collectorFav": "Favoritos de colecionadores",
+    "handpicked": "Peças selecionadas com procedência.",
+    "searchPlaceholder": "Buscar vasos, mantas, bandejas...",
+    "sellerProfiles": "Perfis de vendedores",
+    "sellerTitle": "Dê aos artesãos um estúdio, não apenas uma loja.",
+    "sellerDesc": "Os vendedores podem contar sua história, publicar listagens detalhadas, criar confiança por meio de avaliações e conectar-se com clientes que se importam com materiais, origem e processo.",
+    "dedicatedProfiles": "Perfis dedicados",
+    "verifiedCraft": "Ofício verificado",
+    "secureCom": "Comércio seguro",
+    "startSelling": "Começar a vender",
+    "commJournal": "Diário da comunidade",
+    "storiesTitle": "Histórias por trás do trabalho.",
+    "readAll": "Ler todas as histórias"
+  },
+  "categories": {
+    "ceramics": {
+      "name": "Cerâmica",
+      "count": "1.240 peças",
+      "description": "Vasos torneados, louça e argila escultural."
+    },
+    "textiles": {
+      "name": "Têxteis",
+      "count": "614 peças",
+      "description": "Mantas tecidas, artigos de linho, tinturas naturais e tecidos preciosos."
+    },
+    "woodwork": {
+      "name": "Marcenaria",
+      "count": "832 peças",
+      "description": "Tábuas de borda viva, objetos entalhados, móveis e artigos para o lar."
+    },
+    "jewelry": {
+      "name": "Joalheria",
+      "count": "480 peças",
+      "description": "Metalurgia em pequenos lotes, pedras preciosas e lembranças portáteis."
+    }
+  },
+  "products": {
+    "moonlight-vase": {
+      "name": "Vaso Mosqueado Lua Cheia",
+      "description": "Um vaso de grés tátil com manchas ricas em ferro e esmalte cetinado, feito em pequenos lotes para colecionadores.",
+      "badge": "Escolha do editor",
+      "material": "Grés",
+      "category": "Cerâmica"
+    },
+    "organic-cloud-throw": {
+      "name": "Manta Nuvem Orgânica",
+      "description": "Uma manta tecida à mão em algodão orgânico, acabada por um estúdio têxtil familiar.",
+      "badge": "Mais vendido",
+      "material": "Algodão orgânico",
+      "category": "Têxteis"
+    },
+    "walnut-board": {
+      "name": "Tábua de Nogueira de Borda Viva",
+      "description": "Uma tábua de servir de borda viva em nogueira recuperada, acabada com óleo seguro para alimentos.",
+      "badge": "Edição limitada",
+      "material": "Nogueira recuperada",
+      "category": "Marcenaria"
+    },
+    "nordic-teapot": {
+      "name": "Bule Nórdico Gota a Gota",
+      "description": "Um bule esmaltado luminoso com alça de bambu trançado para rituais diários.",
+      "badge": "Novo",
+      "material": "Porcelana",
+      "category": "Cerâmica"
+    },
+    "hammered-cuff": {
+      "name": "Bracelete de Cobre Martelado",
+      "description": "Um bracelete de cobre martelado à mão com pátina quente que se aprofunda com o tempo.",
+      "badge": "Presente ideal",
+      "material": "Cobre reciclado",
+      "category": "Joalheria"
+    },
+    "linen-napkin-set": {
+      "name": "Conjunto de Guardanapos de Linho Puro",
+      "description": "Quatro guardanapos de linho macios costurados internamente com acabamento sálvia tingido à mão.",
+      "badge": "Sustentável",
+      "material": "Linho europeu",
+      "category": "Têxteis"
+    }
+  },
+  "stories": {
+    "elena-rossi-studio": {
+      "title": "Elena Rossi sobre a Poesia da Argila",
+      "excerpt": "Dentro de um estúdio numa encosta onde argila e esmaltes minerais se tornam utensílios cotidianos.",
+      "category": "História de Artesão",
+      "readTime": "6 min de leitura"
+    },
+    "arlo-finch-woodworking": {
+      "title": "Onde Árvores se Tornam Mesas",
+      "excerpt": "Um marceneiro de Vermont explica como nogueira recuperada vira tábuas e móveis com história visível.",
+      "category": "Por Trás do Artesanato",
+      "readTime": "8 min de leitura"
+    },
+    "heritage-weaves-story": {
+      "title": "O Movimento Têxtil Lento",
+      "excerpt": "Heritage Weaves prova que produtos macios podem ser luxuosos, rastreáveis e responsavelmente fabricados.",
+      "category": "Sustentabilidade",
+      "readTime": "5 min de leitura"
+    }
+  },
+  "featuredSeller": {
+    "story": "Fundada no coração das rochas vermelhas, Earth & Ember celebra a argila do deserto, mãos pacientes e objetos funcionais que carregam um senso de lugar."
+  }
+}

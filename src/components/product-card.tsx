@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Heart, MapPin, Star } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import ShimmerImage from "@/components/ui/shimmer-image"
 
 export interface Product {
@@ -32,6 +33,7 @@ export default function ProductCard({
   showAction = false,
   compact = false,
 }: ProductCardProps) {
+  const t = useTranslations("common")
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
@@ -100,7 +102,7 @@ export default function ProductCard({
                 ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b] dark:bg-[#2a1800]"
                 : "border-hh-border bg-hh-card text-hh-muted hover:border-[#c8651b] hover:text-[#c8651b]"
             }`}
-            aria-label={saved ? "Remove from collection" : "Save to collection"}
+            aria-label={saved ? t("removeFromCollection") : t("saveToCollection")}
           >
             <Heart size={16} fill={saved ? "currentColor" : "none"} />
           </button>
@@ -108,7 +110,7 @@ export default function ProductCard({
 
         <div className="mb-2 space-y-0.5 text-xs text-hh-muted">
           <p>
-            by{" "}
+            {t("by")}{" "}
             <span className="font-semibold text-hh-body">
               {product.seller}
             </span>
@@ -152,7 +154,7 @@ export default function ProductCard({
               href={`/product/${product.id}`}
               className="rounded-md bg-[#063f34] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#0b5b4a]"
             >
-              View
+              {t("view")}
             </Link>
           )}
         </div>
