@@ -20,7 +20,8 @@
     "admin": "Administração",
     "signOut": "Sair",
     "myAccount": "Minha conta",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "sellerProfile": "Meu Perfil"
   },
   "footer": {
     "sustainably": "Abastecimento sustentável",
@@ -163,5 +164,25 @@
   },
   "featuredSeller": {
     "story": "Fundada no coração das rochas vermelhas, Earth & Ember celebra a argila do deserto, mãos pacientes e objetos funcionais que carregam um senso de lugar."
+  },
+  "sellerProfile": {
+    "title": "Editar Perfil",
+    "subtitle": "Atualize os detalhes do seu estúdio.",
+    "name": "Nome",
+    "studioName": "Nome do Estúdio",
+    "location": "Localização",
+    "story": "História",
+    "saveChanges": "Salvar alterações",
+    "successTitle": "Perfil atualizado",
+    "successDesc": "Suas alterações foram salvas.",
+    "errorMsg": "Não foi possível salvar o perfil.",
+    "changePasswordTitle": "Alterar Senha",
+    "changePasswordSubtitle": "Atualize a senha da sua conta.",
+    "currentPassword": "Senha Atual",
+    "newPassword": "Nova Senha",
+    "changePasswordBtn": "Alterar senha",
+    "passwordSuccessTitle": "Senha alterada",
+    "passwordSuccessDesc": "Sua senha foi atualizada.",
+    "passwordErrorMsg": "Não foi possível alterar a senha."
   }
 }

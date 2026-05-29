@@ -256,6 +256,14 @@ export default function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                 )}
+                {user.role === "seller" && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/sell/profile">
+                      <UserRound size={15} />
+                      {t("sellerProfile")}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 {user.role === "admin" && (
                   <DropdownMenuItem asChild>
                     <Link href="/admin">

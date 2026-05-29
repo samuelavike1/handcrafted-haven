@@ -115,6 +115,19 @@ export const checkoutSchema = z.object({
   items: z.array(checkoutItemSchema).min(1, "Your cart is empty."),
 })
 
+export const updateProfileSchema = z.object({
+  name: z.string().trim().min(2, "Your name is required."),
+  studioName: z.string().trim().min(2, "Studio name is required.").optional(),
+  location: z.string().trim().min(2, "Location is required.").optional(),
+  story: z.string().trim().optional(),
+})
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required."),
+  newPassword: z.string().min(8, "New password must be at least 8 characters."),
+})
+
+
 export type ProductInput = z.infer<typeof productInputSchema>
 export type AuthRegistrationInput = z.infer<typeof authRegistrationSchema>
 export type AuthLoginInput = z.infer<typeof authLoginSchema>
@@ -122,3 +135,5 @@ export type AdminCreateInput = z.infer<typeof adminCreateSchema>
 export type UserRole = z.infer<typeof userRoleSchema>
 export type SellerRegistrationInput = z.infer<typeof sellerRegistrationSchema>
 export type CheckoutInput = z.infer<typeof checkoutSchema>
+export type UpdateProfileInput = z.infer<typeof updateProfileSchema>
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>

@@ -20,7 +20,8 @@
     "admin": "Administration",
     "signOut": "Se déconnecter",
     "myAccount": "Mon compte",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "sellerProfile": "Mon Profil"
   },
   "footer": {
     "sustainably": "Approvisionnement durable",
@@ -163,5 +164,25 @@
   },
   "featuredSeller": {
     "story": "Fondé au cœur des roches rouges, Earth & Ember célèbre l'argile du désert, les mains patientes et les objets fonctionnels qui portent un sens du lieu."
+  },
+  "sellerProfile": {
+    "title": "Modifier le Profil",
+    "subtitle": "Mettez à jour les détails de votre studio.",
+    "name": "Nom",
+    "studioName": "Nom du Studio",
+    "location": "Emplacement",
+    "story": "Histoire",
+    "saveChanges": "Sauvegarder",
+    "successTitle": "Profil mis à jour",
+    "successDesc": "Vos modifications ont été sauvegardées.",
+    "errorMsg": "Le profil n'a pas pu être sauvegardé.",
+    "changePasswordTitle": "Changer le Mot de Passe",
+    "changePasswordSubtitle": "Mettez à jour le mot de passe de votre compte.",
+    "currentPassword": "Mot de Passe Actuel",
+    "newPassword": "Nouveau Mot de Passe",
+    "changePasswordBtn": "Changer le mot de passe",
+    "passwordSuccessTitle": "Mot de passe modifié",
+    "passwordSuccessDesc": "Votre mot de passe a été mis à jour.",
+    "passwordErrorMsg": "Le mot de passe n'a pas pu être modifié."
   }
 }

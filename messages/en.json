@@ -20,7 +20,8 @@
     "admin": "Admin",
     "signOut": "Sign out",
     "myAccount": "My account",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "sellerProfile": "My Profile"
   },
   "footer": {
     "sustainably": "Sustainably sourced",
@@ -163,5 +164,25 @@
   },
   "featuredSeller": {
     "story": "Founded in the heart of the red rocks, Earth & Ember is a celebration of desert clay, patient hands, and functional objects that carry a sense of place."
+  },
+  "sellerProfile": {
+    "title": "Edit Profile",
+    "subtitle": "Update your studio details.",
+    "name": "Name",
+    "studioName": "Studio Name",
+    "location": "Location",
+    "story": "Story",
+    "saveChanges": "Save changes",
+    "successTitle": "Profile updated",
+    "successDesc": "Your changes have been saved.",
+    "errorMsg": "Could not save profile.",
+    "changePasswordTitle": "Change Password",
+    "changePasswordSubtitle": "Update your account password.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "changePasswordBtn": "Change password",
+    "passwordSuccessTitle": "Password changed",
+    "passwordSuccessDesc": "Your password has been updated.",
+    "passwordErrorMsg": "Could not change password."
   }
 }

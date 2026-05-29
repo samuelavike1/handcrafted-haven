@@ -187,3 +187,43 @@ export async function deleteUserById(id: string) {
   await db.collection(sessionsCollection).deleteMany({ userId: id })
   return publicUser(user)
 }
+
+export async function updateUserProfile(id: string, input: { name: string; studioName?: string; location?: string; story?: string }) {
+    const db = await getDb()
+  await ensureAuthIndexes(db)
+  const user = await db
+    .collection<UserDocument>(usersCollection)
+    .findOne({ id })
+  if (!user) return null
+  await db.collection<UserDocument>(usersCollection).updateOne(
+  { id },
+  { $set: { ...input, updatedAt: new Date().toISOString() } }
+  )
+  const updatedUser = await db
+    .collection<UserDocument>(usersCollection)
+    .findOne({ id })
+  
+  return updatedUser ? publicUser(updatedUser) : null
+}
+
+export async function updateUserPassword(id: string, currentPassword: string, newPassword: string) {
+  const db = await getDb()
+  await ensureAuthIndexes(db)
+  const user = await db
+    .collection<UserDocument>(usersCollection)
+    .findOne({ id })
+  if (!user) return null
+
+  if (!verifyPassword(currentPassword, user.passwordSalt, user.passwordHash)) {
+    return { error: "Current password is incorrect." }
+  }
+
+  const { hash, salt } = hashPassword(newPassword)
+  
+  await db.collection<UserDocument>(usersCollection).updateOne(
+  { id },
+  { $set: { passwordHash: hash, passwordSalt: salt } }
+  )
+  
+  return { ok: true }
+}
