@@ -45,6 +45,17 @@ import { Skeleton, TableSkeleton } from "@/components/ui/loading"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import ShimmerImage from "@/components/ui/shimmer-image"
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts"
+
 /* ── Types ─────────────────────────────────────────── */
 
 type Listing = {
@@ -277,6 +288,55 @@ export default function SellerDashboardClient({
       .slice(0, 5)
   }, [orders])
 
+  const revenueByDay = useMemo(() => {
+  const days: Record<string, { date: string; revenue: number; orders: number; units: number }> = {}
+
+  const today = new Date()
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(today.getDate() - i)
+    const key = d.toISOString().slice(0, 10)
+    const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    days[key] = { date: label, revenue: 0, orders: 0, units: 0 }
+  }
+
+  orders.forEach((order) => {
+    const key = order.createdAt.slice(0, 10)
+    if (days[key]) {
+      days[key].revenue += order.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      days[key].orders += 1
+      days[key].units += order.items.reduce((sum, item) => sum + item.quantity, 0)
+    }
+  })
+
+  return Object.values(days)
+}, [orders])
+
+const thisMonthRevenue = useMemo(() => {
+  const now = new Date()
+  const currentMonth = now.getMonth()
+  const currentYear = now.getFullYear()
+
+  return orders
+    .filter((order) => {
+      const date = new Date(order.createdAt)
+      return date.getMonth() === currentMonth && date.getFullYear() === currentYear
+    })
+    .reduce((sum, order) => {
+      return sum + order.items.reduce((itemSum, item) => itemSum + item.price * item.quantity, 0)
+    }, 0)
+}, [orders])
+
+
+const [revenueGoal, setRevenueGoal] = useState<number>(() => {
+  if (typeof window === "undefined") return 0
+  return Number(localStorage.getItem("seller_revenue_goal") ?? 0)
+})
+const [goalInput, setGoalInput] = useState<string>(() => {
+  if (typeof window === "undefined") return ""
+  return localStorage.getItem("seller_revenue_goal") ?? ""
+})
+
   /* ── Filtered listings ─── */
   const filteredListings = useMemo(() => {
     const q = listingQuery.trim().toLowerCase()
@@ -490,6 +550,14 @@ export default function SellerDashboardClient({
     }
   }
 
+  const saveRevenueGoal = () => {
+  const value = Number(goalInput)
+  if (!value || value <= 0) return
+  localStorage.setItem("seller_revenue_goal", String(value))
+  setRevenueGoal(value)
+  toast.success("Goal saved", { description: `Monthly target set to $${value.toFixed(2)}` })
+}
+
   /* ── Navigation tabs ─── */
   const tabs: { id: DashView; label: string; icon: typeof BarChart3 }[] = [
     { id: "overview", label: "Overview", icon: BarChart3 },
@@ -639,6 +707,70 @@ export default function SellerDashboardClient({
             ))}
           </div>
 
+
+            <section className="rounded-lg border border-[#d8dfdc] bg-white shadow-sm overflow-hidden">
+              <div className="border-b border-[#e8edeb] bg-[#f9faf9] px-5 py-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#9aada8]">Performance</p>
+                <h2 className="mt-1 text-base font-black text-[#063f34]">Revenue — Last 7 Days</h2>
+              </div>
+              <div className="p-5">
+                <ResponsiveContainer width="100%" height={260}>
+                  <LineChart data={revenueByDay}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#eef1ef" />
+                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#9aada8" }} />
+                    <YAxis tick={{ fontSize: 11, fill: "#9aada8" }} />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="revenue" stroke="#063f34" strokeWidth={2} dot={false} name="Revenue ($)" />
+                    <Line type="monotone" dataKey="orders" stroke="#c8651b" strokeWidth={2} dot={false} name="Orders" />
+                    <Line type="monotone" dataKey="units" stroke="#1d4ed8" strokeWidth={2} dot={false} name="Units Sold" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+
+            {/* Revenue Goal */}
+<section className="rounded-lg border border-[#d8dfdc] bg-white shadow-sm overflow-hidden">
+  <div className="border-b border-[#e8edeb] bg-[#f9faf9] px-5 py-4">
+    <p className="text-[10px] font-black uppercase tracking-widest text-[#9aada8]">Monthly Target</p>
+    <h2 className="mt-1 text-base font-black text-[#063f34]">Revenue Goal</h2>
+  </div>
+  <div className="p-5">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-sm font-bold text-[#191c1c]">
+        ${thisMonthRevenue.toFixed(2)} earned this month
+      </span>
+      <span className="text-xs font-bold text-[#9aada8]">
+        Goal: ${revenueGoal > 0 ? revenueGoal.toFixed(2) : "—"}
+      </span>
+    </div>
+
+    {revenueGoal > 0 && (
+      <div className="h-3 w-full overflow-hidden rounded-full bg-[#f4f6f5]">
+        <div
+          className="h-full rounded-full bg-[#0b5345] transition-all duration-500"
+          style={{ width: `${Math.min((thisMonthRevenue / revenueGoal) * 100, 100)}%` }}
+        />
+      </div>
+    )}
+
+    <div className="mt-4 flex gap-2">
+      <input
+        type="number"
+        value={goalInput}
+        onChange={(e) => setGoalInput(e.target.value)}
+        placeholder="Set monthly goal ($)"
+        className="h-9 flex-1 rounded-lg border border-[#d8dfdc] bg-white px-3 text-sm outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/8"
+      />
+      <button
+        onClick={saveRevenueGoal}
+        className="rounded-lg bg-[#063f34] px-4 py-2 text-sm font-bold text-white hover:bg-[#075144]"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</section>
           {/* Bottom row: top products + category breakdown */}
           <div className="grid gap-4 lg:grid-cols-2">
             {/* Top Products */}

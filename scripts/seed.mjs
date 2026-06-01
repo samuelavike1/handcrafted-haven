@@ -769,19 +769,79 @@ try {
     }))
   )
 
-  await db.collection("orders").insertOne({
+await db.collection("orders").insertMany([
+  {
     id: "order-demo-1001",
     buyerId: "buyer-demo",
     buyerEmail: "buyer@haven.test",
-    status: "Processing",
-    total: 227,
+    status: "Delivered",
+    subtotal: 227,
+    shipping: 0,
+    tax: 18.16,
+    total: 245.16,
+    paymentMethod: "card",
+    customer: { name: "Maya Collector", email: "buyer@haven.test", street: "123 Main St", city: "Boise", postalCode: "83701" },
     items: [
-      { productId: "desert-moon-mug", quantity: 1, price: 42 },
-      { productId: "organic-cloud-throw", quantity: 1, price: 185 },
+      { productId: "desert-moon-mug", name: "Desert Moon Mug", seller: "Earth & Ember Ceramics", sellerId: "seller-earth-ember", image: "", quantity: 1, price: 42 },
+      { productId: "organic-cloud-throw", name: "Organic Cloud Throw", seller: "Heritage Weaves Co.", sellerId: "seller-heritage-weaves", image: "", quantity: 1, price: 185 },
     ],
-    createdAt: now,
+    createdAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: now,
-  })
+  },
+  {
+    id: "order-demo-1002",
+    buyerId: "buyer-demo",
+    buyerEmail: "buyer@haven.test",
+    status: "Shipped",
+    subtotal: 158,
+    shipping: 12,
+    tax: 12.64,
+    total: 182.64,
+    paymentMethod: "card",
+    customer: { name: "Maya Collector", email: "buyer@haven.test", street: "123 Main St", city: "Boise", postalCode: "83701" },
+    items: [
+      { productId: "moonlight-speckled-vase", name: "Moonlight Speckled Vase", seller: "Earth & Ember Ceramics", sellerId: "seller-earth-ember", image: "", quantity: 1, price: 124 },
+      { productId: "maple-coffee-scoop", name: "Maple Coffee Scoop", seller: "Roots & Relic Studio", sellerId: "seller-roots-relic", image: "", quantity: 1, price: 34 },
+    ],
+    createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: now,
+  },
+  {
+    id: "order-demo-1003",
+    buyerId: "buyer-demo",
+    buyerEmail: "buyer@haven.test",
+    status: "Processing",
+    subtotal: 96,
+    shipping: 12,
+    tax: 7.68,
+    total: 115.68,
+    paymentMethod: "wallet",
+    customer: { name: "Maya Collector", email: "buyer@haven.test", street: "123 Main St", city: "Boise", postalCode: "83701" },
+    items: [
+      { productId: "ochre-serving-platter", name: "Ochre Serving Platter", seller: "Earth & Ember Ceramics", sellerId: "seller-earth-ember", image: "", quantity: 1, price: 96 },
+    ],
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: now,
+  },
+  {
+    id: "order-demo-1004",
+    buyerId: "buyer-demo",
+    buyerEmail: "buyer@haven.test",
+    status: "Processing",
+    subtotal: 110,
+    shipping: 12,
+    tax: 8.80,
+    total: 130.80,
+    paymentMethod: "card",
+    customer: { name: "Maya Collector", email: "buyer@haven.test", street: "123 Main St", city: "Boise", postalCode: "83701" },
+    items: [
+      { productId: "sage-pour-over-dripper", name: "Sage Pour-Over Dripper", seller: "Earth & Ember Ceramics", sellerId: "seller-earth-ember", image: "", quantity: 1, price: 58 },
+      { productId: "hammered-copper-cuff", name: "Hammered Copper Cuff", seller: "Roots & Relic Studio", sellerId: "seller-roots-relic", image: "", quantity: 1, price: 55 },
+    ],
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: now,
+  },
+])
 
   const [userCount, productCount, orderCount] = await Promise.all([
     db.collection("users").countDocuments({}),
