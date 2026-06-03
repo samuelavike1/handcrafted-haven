@@ -7,9 +7,22 @@ import { storyPosts } from "@/lib/market-data"
 import ShimmerImage from "@/components/ui/shimmer-image"
 
 export const metadata: Metadata = {
-  title: "Artisan Stories | Handcrafted Haven",
+  title: "Artisan Stories",
   description:
-    "Meet the makers, materials, and communities behind Handcrafted Haven.",
+    "Meet the makers, materials, and communities behind Handcrafted Haven. Profiles, craft guides, and sustainability stories.",
+  openGraph: {
+    title: "Artisan Stories",
+    description:
+      "Meet the makers, materials, and communities behind Handcrafted Haven.",
+    images: [{ url: "/hero_artisan_1779021032867.png", alt: "Artisan at work" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Artisan Stories",
+    description:
+      "Meet the makers, materials, and communities behind Handcrafted Haven.",
+    images: ["/hero_artisan_1779021032867.png"],
+  },
 }
 
 export default function StoriesPage() {
@@ -20,7 +33,7 @@ export default function StoriesPage() {
       <Navbar />
 
       <main>
-        <section className="mx-auto grid max-w-[1080px] gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <section aria-label="Stories hero" className="mx-auto grid max-w-[1080px] gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div className="flex flex-col justify-center">
             <p className="text-xs font-black text-[#9a4d10] uppercase">
               Community journal
@@ -83,7 +96,7 @@ export default function StoriesPage() {
           </Link>
         </section>
 
-        <section className="border-t border-hh-border bg-hh-surface py-6">
+        <section aria-label="Latest stories" className="border-t border-hh-border bg-hh-surface py-6">
           <div className="mx-auto max-w-[1080px] px-4 sm:px-5 lg:px-6">
             <div className="mb-5">
               <p className="text-xs font-black text-[#9a4d10] uppercase">

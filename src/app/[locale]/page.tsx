@@ -72,12 +72,36 @@ export default async function HomePage() {
     ["92%", t("shipping")],
   ]
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://handcrafted-haven.vercel.app"
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Handcrafted Haven",
+    description:
+      "Discover curated artisan treasures from independent makers worldwide.",
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/en/browse?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  }
+
   return (
     <div className="min-h-screen bg-hh-canvas">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
 
       <main>
-        <section className="relative overflow-hidden">
+        <section aria-label="Hero banner" className="relative overflow-hidden">
           <div className="absolute inset-0">
             <ShimmerImage
               src={images.heroArtisan}
@@ -174,7 +198,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
+        <section aria-label="Shop by category" className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
           <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <p className="text-xs font-black text-[#9a4d10] uppercase">
@@ -221,7 +245,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="bg-hh-surface py-6">
+        <section aria-label="Featured products" className="bg-hh-surface py-6">
           <div className="mx-auto max-w-[1080px] px-4 sm:px-5 lg:px-6">
             <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
@@ -253,7 +277,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-[1080px] gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <section aria-label="Featured seller" className="mx-auto grid max-w-[1080px] gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div className="overflow-hidden rounded-lg bg-[#063f34] text-white">
             <div className="relative h-36">
               <ShimmerImage
@@ -318,7 +342,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="border-t border-hh-border bg-hh-card py-6">
+        <section aria-label="Community journal" className="border-t border-hh-border bg-hh-card py-6">
           <div className="mx-auto max-w-[1080px] px-4 sm:px-5 lg:px-6">
             <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>

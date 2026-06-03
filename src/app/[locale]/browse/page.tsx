@@ -7,9 +7,22 @@ import { getProducts } from "@/lib/server-products"
 import { categories, products as fallbackProducts } from "@/lib/market-data"
 
 export const metadata: Metadata = {
-  title: "Browse Handmade Goods | Handcrafted Haven",
+  title: "Browse Handmade Goods",
   description:
-    "Explore handcrafted ceramics, textiles, woodwork, jewelry, and sustainable artisan goods.",
+    "Explore handcrafted ceramics, textiles, woodwork, jewelry, and sustainable artisan goods from independent makers worldwide.",
+  openGraph: {
+    title: "Browse Handmade Goods",
+    description:
+      "Explore handcrafted ceramics, textiles, woodwork, jewelry, and sustainable artisan goods.",
+    images: [{ url: "/category_pottery_1779021047174.png", alt: "Handcrafted ceramics collection" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Browse Handmade Goods",
+    description:
+      "Explore handcrafted ceramics, textiles, woodwork, jewelry, and sustainable artisan goods.",
+    images: ["/category_pottery_1779021047174.png"],
+  },
 }
 
 const priceRanges = ["Under $50", "$50 - $100", "$100 - $200", "$200+"]
@@ -44,7 +57,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
       <Navbar />
 
       <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
-        <section className="mb-5 overflow-hidden rounded-lg bg-[#063f34] p-4 text-white lg:p-4">
+        <section aria-label="Browse header" className="mb-5 overflow-hidden rounded-lg bg-[#063f34] p-4 text-white lg:p-4">
           <div className="grid gap-4 lg:grid-cols-[1fr_320px] lg:items-end">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-sm font-bold">
@@ -78,7 +91,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
         </section>
 
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-          <aside className="hidden lg:block">
+          <aside aria-label="Filter products" className="hidden lg:block">
             <div className="sticky top-24 space-y-6 rounded-lg border border-hh-border bg-hh-card p-4">
               <div className="flex items-center justify-between">
                 <h2 className="font-black text-hh-heading">Refine</h2>
@@ -143,7 +156,7 @@ export default async function BrowsePage({ searchParams }: BrowsePageProps) {
             </div>
           </aside>
 
-          <section>
+          <section aria-label="Product catalog">
             <div className="mb-5 flex flex-col gap-4 rounded-lg border border-hh-border bg-hh-card p-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-hh-muted">

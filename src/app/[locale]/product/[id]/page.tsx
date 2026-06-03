@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import {
@@ -16,6 +17,31 @@ import { getProductById, getRelatedProducts } from "@/lib/server-products"
 
 interface ProductPageProps {
   params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  const { id } = await params
+  const product = await getProductById(id)
+  if (!product) return {}
+
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      type: "website",
+      title: `${product.name} by ${product.seller}`,
+      description: product.description,
+      images: product.image ? [{ url: product.image, alt: product.name }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} by ${product.seller}`,
+      description: product.description,
+      images: product.image ? [product.image] : [],
+    },
+  }
 }
 
 function formatDate(value: string) {
@@ -39,12 +65,41 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     ...(product.galleryImages ?? []),
   ].filter(Boolean)
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: galleryImages,
+    brand: { "@type": "Brand", name: product.seller },
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "USD",
+      availability:
+        product.stock > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+    },
+    ...(product.reviews > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: product.rating,
+        reviewCount: product.reviews,
+      },
+    }),
+  }
+
   return (
     <div className="min-h-screen bg-hh-canvas">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
 
       <main className="mx-auto max-w-[1080px] px-4 py-6 sm:px-5 lg:px-6">
-        <nav className="mb-4 text-sm font-semibold text-hh-muted">
+        <nav aria-label="Breadcrumb" className="mb-4 text-sm font-semibold text-hh-muted">
           <Link href="/browse" className="hover:text-hh-heading">
             Browse
           </Link>
@@ -54,7 +109,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           <span className="text-hh-heading">{product.name}</span>
         </nav>
 
-        <section className="grid gap-5 lg:grid-cols-[0.9fr_1fr]">
+        <section aria-label="Product details" className="grid gap-5 lg:grid-cols-[0.9fr_1fr]">
           <ProductDetailClient
             product={{
               id: product.id,
@@ -147,7 +202,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </section>
 
-        <section className="mt-8 grid gap-4 border-t border-hh-border pt-6 lg:grid-cols-[240px_1fr]">
+        <section aria-label="Customer reviews" className="mt-8 grid gap-4 border-t border-hh-border pt-6 lg:grid-cols-[240px_1fr]">
           <div>
             <p className="text-xs font-black text-[#9a4d10] uppercase">
               Reviews and ratings
@@ -200,7 +255,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
         </section>
 
-        <section className="mt-8">
+        <section aria-label="Related products" className="mt-8">
           <div className="mb-4 flex items-end justify-between">
             <div>
               <p className="text-xs font-black text-[#9a4d10] uppercase">
