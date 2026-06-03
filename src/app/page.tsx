@@ -19,10 +19,31 @@ import {
 } from "@/lib/market-data"
 import { images } from "@/lib/images"
 import ShimmerImage from "@/components/ui/shimmer-image"
+import { getProducts } from "@/lib/server-products"
 
-const featuredProducts = products.slice(0, 4)
+async function getHomepageProducts() {
+  try {
+    return await getProducts()
+  } catch {
+    return []
+  }
+}
 
-export default function HomePage() {
+export default async function HomePage() {
+  const dbProducts = await getHomepageProducts()
+  const featuredProducts = dbProducts
+    .filter((product) => product.status !== "Draft")
+    .sort((a, b) => {
+      if (b.rating !== a.rating) return b.rating - a.rating
+      return b.reviews - a.reviews
+    })
+    .slice(0, 4)
+  const fallbackProducts = products.slice(0, 4)
+  const homepageProducts = featuredProducts.length
+    ? featuredProducts
+    : fallbackProducts
+  const heroProduct = homepageProducts[0] ?? products[0]
+
   return (
     <div className="min-h-screen bg-[#fbfbf8]">
       <Navbar />
@@ -90,8 +111,8 @@ export default function HomePage() {
               <div className="rounded-lg bg-[#fbfbf8] p-2.5">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-md">
                   <ShimmerImage
-                    src={products[0].image}
-                    alt={products[0].name}
+                    src={heroProduct.image}
+                    alt={heroProduct.name}
                     fill
                     className="object-cover"
                     unoptimized
@@ -107,21 +128,21 @@ export default function HomePage() {
                         size={15}
                         className="fill-[#c8651b] text-[#c8651b]"
                       />{" "}
-                      4.9
+                      {heroProduct.rating}
                     </span>
                   </div>
                   <h2 className="text-lg font-black text-[#063f34]">
-                    {products[0].name}
+                    {heroProduct.name}
                   </h2>
                   <p className="mt-2 text-xs leading-relaxed text-[#53615c]">
-                    {products[0].description}
+                    {heroProduct.description}
                   </p>
                   <div className="mt-4 flex items-center justify-between">
                     <p className="text-lg font-black">
-                      ${products[0].price.toFixed(2)}
+                      ${heroProduct.price.toFixed(2)}
                     </p>
                     <Link
-                      href="/product/moonlight-vase"
+                      href={`/product/${heroProduct.id}`}
                       className="rounded-md bg-[#063f34] px-3 py-2 text-xs font-black text-white"
                     >
                       View piece
@@ -205,7 +226,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {featuredProducts.map((product) => (
+              {homepageProducts.map((product) => (
                 <ProductCard key={product.id} product={product} showAction />
               ))}
             </div>
@@ -303,17 +324,16 @@ export default function HomePage() {
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {storyPosts.map((story) => (
-                <Link
+                <article
                   key={story.id}
-                  href={`/stories/${story.id}`}
-                  className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#fbfbf8]"
+                  className="overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#fbfbf8]"
                 >
                   <div className="relative h-36 overflow-hidden">
                     <ShimmerImage
                       src={story.image}
                       alt={story.title}
                       fill
-                      className="object-cover transition duration-700 group-hover:scale-105"
+                      className="object-cover"
                       unoptimized
                     />
                   </div>
@@ -331,7 +351,7 @@ export default function HomePage() {
                       {story.readTime} · {story.date}
                     </p>
                   </div>
-                </Link>
+                </article>
               ))}
             </div>
           </div>

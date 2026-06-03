@@ -34,10 +34,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const related = await getRelatedProducts(product)
   const reviewItems = product.reviewItems ?? []
   const materials = product.materials ?? []
-  const galleryImages = [
-    product.image,
-    ...(product.galleryImages ?? []),
-  ].filter(Boolean)
 
   return (
     <div className="min-h-screen bg-[#fbfbf8]">
@@ -66,7 +62,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               category: product.category,
               description: product.description,
             }}
-            galleryImages={galleryImages}
             variant="gallery"
           />
 
@@ -126,7 +121,6 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 category: product.category,
                 description: product.description,
               }}
-              galleryImages={galleryImages}
               variant="actions"
             />
 

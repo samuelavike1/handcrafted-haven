@@ -33,7 +33,7 @@ export const categories = [
 
 export const products = [
   {
-    id: "moonlight-vase",
+    id: "moonlight-speckled-vase",
     name: "Moonlight Speckled Vase",
     seller: "Studio Elara",
     sellerLocation: "Tuscany, Italy",
@@ -63,7 +63,7 @@ export const products = [
       "A handwoven throw with generous texture, made from organic cotton and finished by a family-run textile studio.",
   },
   {
-    id: "walnut-board",
+    id: "live-edge-walnut-board",
     name: "Live-Edge Walnut Board",
     seller: "Roots Woodshop",
     sellerLocation: "Bend, Oregon",

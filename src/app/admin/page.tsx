@@ -51,7 +51,7 @@ export default async function AdminPage() {
           </Link>
           <Link
             href="/login"
-            className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold text-white/80 transition-colors hover:bg-white/15 hover:text-white backdrop-blur-sm"
+            className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold text-white/80 backdrop-blur-sm transition-colors hover:bg-white/15 hover:text-white"
           >
             Buyer sign in
           </Link>
@@ -61,11 +61,10 @@ export default async function AdminPage() {
         <div className="flex flex-1 items-center justify-center px-4 py-10">
           <div className="mx-auto w-full max-w-[1040px]">
             <div className="grid gap-8 lg:grid-cols-[1fr_480px] lg:items-center">
-
               {/* Left — Branding */}
               <div className="text-white">
                 <div className="mb-6 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f7b071]/20 backdrop-blur-sm border border-[#f7b071]/30">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#f7b071]/30 bg-[#f7b071]/20 backdrop-blur-sm">
                     <ShieldCheck size={24} className="text-[#f7b071]" />
                   </div>
                   <div>
@@ -78,7 +77,7 @@ export default async function AdminPage() {
                   </div>
                 </div>
 
-                <h1 className="text-4xl font-black leading-tight tracking-tight text-white lg:text-5xl">
+                <h1 className="text-4xl leading-tight font-black tracking-tight text-white lg:text-5xl">
                   Manage your
                   <br />
                   <span className="text-[#f7b071]">marketplace.</span>
@@ -100,7 +99,7 @@ export default async function AdminPage() {
                       className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-sm"
                     >
                       <p className="text-lg">{icon}</p>
-                      <p className="mt-1 text-xs font-bold text-white/60 uppercase tracking-wide">
+                      <p className="mt-1 text-xs font-bold tracking-wide text-white/60 uppercase">
                         {label}
                       </p>
                     </div>
@@ -114,7 +113,7 @@ export default async function AdminPage() {
               </div>
 
               {/* Right — Login form */}
-              <div className="rounded-2xl border border-white/10 bg-white/8 p-1 backdrop-blur-xl shadow-2xl shadow-black/30">
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-1 shadow-2xl shadow-black/30 backdrop-blur-xl">
                 <div className="rounded-xl bg-white p-6">
                   <p className="text-xs font-black tracking-widest text-[#9a4d10] uppercase">
                     Admin sign in

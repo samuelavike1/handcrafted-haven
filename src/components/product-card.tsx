@@ -25,14 +25,17 @@ interface ProductCardProps {
   product: Product
   showAction?: boolean
   compact?: boolean
+  href?: string
 }
 
 export default function ProductCard({
   product,
   showAction = false,
   compact = false,
+  href,
 }: ProductCardProps) {
   const [saved, setSaved] = useState(false)
+  const productHref = href ?? `/product/${product.id}`
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -60,7 +63,7 @@ export default function ProductCard({
 
   return (
     <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_10px_22px_rgba(18,40,33,0.08)]">
-      <Link href={`/product/${product.id}`} className="block">
+      <Link href={productHref} className="block">
         <div
           className={`relative overflow-hidden bg-[#edf2ef] ${compact ? "aspect-[4/2.8]" : "aspect-[4/2.45]"}`}
         >
@@ -87,7 +90,7 @@ export default function ProductCard({
             <p className="mb-1 text-[11px] font-bold text-[#9a4d10] uppercase">
               {product.category}
             </p>
-            <Link href={`/product/${product.id}`}>
+            <Link href={productHref}>
               <h3 className="text-sm leading-snug font-bold text-[#063f34] transition group-hover:text-[#0b5b4a]">
                 {product.name}
               </h3>
@@ -149,7 +152,7 @@ export default function ProductCard({
 
           {showAction && (
             <Link
-              href={`/product/${product.id}`}
+              href={productHref}
               className="rounded-md bg-[#063f34] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#0b5b4a]"
             >
               View
