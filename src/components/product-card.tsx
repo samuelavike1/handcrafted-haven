@@ -9,6 +9,7 @@ export interface Product {
   id: string
   name: string
   seller: string
+  sellerId?: string
   sellerLocation?: string
   price: number
   rating: number
@@ -19,6 +20,9 @@ export interface Product {
   badge?: string
   materials?: string[]
   description?: string
+  stock?: number
+  status?: "Active" | "Low stock" | "Draft"
+  createdAt?: string
 }
 
 interface ProductCardProps {
@@ -36,6 +40,12 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [saved, setSaved] = useState(false)
   const productHref = href ?? `/product/${product.id}`
+  const sellerHref = product.sellerId ? `/seller/${product.sellerId}` : null
+  const isLowStock =
+    typeof product.stock === "number" &&
+    product.stock > 0 &&
+    (product.stock <= 3 || product.status === "Low stock")
+  const isSoldOut = typeof product.stock === "number" && product.stock <= 0
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -63,7 +73,10 @@ export default function ProductCard({
 
   return (
     <article className="group overflow-hidden rounded-lg border border-[#d8dfdc] bg-white transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_10px_22px_rgba(18,40,33,0.08)]">
-      <Link href={productHref} className="block">
+      <Link
+        href={productHref}
+        className="block focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
+      >
         <div
           className={`relative overflow-hidden bg-[#edf2ef] ${compact ? "aspect-[4/2.8]" : "aspect-[4/2.45]"}`}
         >
@@ -90,7 +103,10 @@ export default function ProductCard({
             <p className="mb-1 text-[11px] font-bold text-[#9a4d10] uppercase">
               {product.category}
             </p>
-            <Link href={productHref}>
+            <Link
+              href={productHref}
+              className="rounded-sm focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
+            >
               <h3 className="text-sm leading-snug font-bold text-[#063f34] transition group-hover:text-[#0b5b4a]">
                 {product.name}
               </h3>
@@ -102,19 +118,40 @@ export default function ProductCard({
               saved
                 ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b]"
                 : "border-[#d8dfdc] bg-white text-[#53615c] hover:border-[#c8651b] hover:text-[#c8651b]"
-            }`}
+            } focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none`}
             aria-label={saved ? "Remove from collection" : "Save to collection"}
           >
             <Heart size={16} fill={saved ? "currentColor" : "none"} />
           </button>
         </div>
 
+        {(isLowStock || isSoldOut) && (
+          <p
+            className={`mb-2 inline-flex rounded-md px-2 py-1 text-[11px] font-black ${
+              isSoldOut
+                ? "bg-[#fff0f0] text-[#8b1f1f]"
+                : "bg-[#fff4e8] text-[#9a4d10]"
+            }`}
+          >
+            {isSoldOut ? "Sold out" : `${product.stock} left`}
+          </p>
+        )}
+
         <div className="mb-2 space-y-0.5 text-xs text-[#53615c]">
           <p>
             by{" "}
-            <span className="font-semibold text-[#25332e]">
-              {product.seller}
-            </span>
+            {sellerHref ? (
+              <Link
+                href={sellerHref}
+                className="rounded-sm font-semibold text-[#25332e] hover:text-[#063f34] hover:underline focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
+              >
+                {product.seller}
+              </Link>
+            ) : (
+              <span className="font-semibold text-[#25332e]">
+                {product.seller}
+              </span>
+            )}
           </p>
           {product.sellerLocation && (
             <p className="flex items-center gap-1.5">
@@ -153,7 +190,7 @@ export default function ProductCard({
           {showAction && (
             <Link
               href={productHref}
-              className="rounded-md bg-[#063f34] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#0b5b4a]"
+              className="rounded-md bg-[#063f34] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#0b5b4a] focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
             >
               View
             </Link>

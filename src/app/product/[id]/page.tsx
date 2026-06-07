@@ -1,17 +1,12 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import {
-  BadgeCheck,
-  Leaf,
-  MessageSquare,
-  ShieldCheck,
-  Star,
-  Truck,
-} from "lucide-react"
+import { BadgeCheck, Leaf, ShieldCheck, Star, Truck } from "lucide-react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import ProductDetailClient from "@/components/product-detail-client"
+import ProductReviewForm from "@/components/product-review-form"
+import { getCurrentUser } from "@/lib/server-auth"
 import { getProductById, getRelatedProducts } from "@/lib/server-products"
 
 interface ProductPageProps {
@@ -31,6 +26,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const product = await getProductById(id)
   if (!product) notFound()
 
+  const currentUser = await getCurrentUser()
   const related = await getRelatedProducts(product)
   const reviewItems = product.reviewItems ?? []
   const materials = product.materials ?? []
@@ -74,7 +70,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </h1>
             <p className="mt-2 text-sm text-[#53615c]">
               by{" "}
-              <Link href="/sell" className="font-bold text-[#9a4d10]">
+              <Link
+                href={
+                  product.sellerId ? `/seller/${product.sellerId}` : "/sell"
+                }
+                className="font-bold text-[#9a4d10]"
+              >
                 {product.seller}
               </Link>{" "}
               · {product.sellerLocation}
@@ -163,6 +164,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
           </div>
 
           <div className="space-y-5">
+            <ProductReviewForm
+              productId={product.id}
+              currentUser={
+                currentUser
+                  ? { name: currentUser.name, email: currentUser.email }
+                  : null
+              }
+            />
             {reviewItems.map((review) => (
               <article
                 key={review.id}
@@ -189,11 +198,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <p className="mt-2 leading-relaxed text-[#53615c]">
                   {review.comment}
                 </p>
-                <button className="mt-4 flex items-center gap-2 text-sm font-bold text-[#53615c]">
-                  <MessageSquare size={16} /> Comment
-                </button>
               </article>
             ))}
+            {!reviewItems.length && (
+              <div className="rounded-lg border border-dashed border-[#d8dfdc] bg-white p-5 text-sm text-[#53615c]">
+                No written reviews yet. Be the first collector to share one.
+              </div>
+            )}
           </div>
         </section>
 
