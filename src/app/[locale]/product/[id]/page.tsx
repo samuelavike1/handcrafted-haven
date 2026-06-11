@@ -13,17 +13,65 @@ import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import ProductCard from "@/components/product-card"
 import ProductDetailClient from "@/components/product-detail-client"
-import { getProductById, getRelatedProducts } from "@/lib/server-products"
+import {
+  getProductById,
+  getRelatedProducts,
+  type ProductDocument,
+} from "@/lib/server-products"
+import { products as fallbackProducts } from "@/lib/market-data"
 
 interface ProductPageProps {
   params: Promise<{ id: string }>
+}
+
+// Build a ProductDocument-shaped object from the static catalog so the page
+// still renders when MongoDB is unavailable (mirrors the /browse fallback).
+function toFallbackProduct(id: string): ProductDocument | null {
+  const base = fallbackProducts.find((product) => product.id === id)
+  if (!base) return null
+  const now = new Date().toISOString()
+  return {
+    ...base,
+    stock: 8,
+    status: "Active",
+    galleryImages: [],
+    reviewItems: [],
+    reviews: base.reviews ?? 0,
+    createdAt: now,
+    updatedAt: now,
+  } as ProductDocument
+}
+
+// Resilient loaders: try the database, fall back to static data on failure.
+async function loadProduct(id: string): Promise<ProductDocument | null> {
+  try {
+    return await getProductById(id)
+  } catch {
+    return toFallbackProduct(id)
+  }
+}
+
+async function loadRelatedProducts(
+  product: ProductDocument
+): Promise<ProductDocument[]> {
+  try {
+    return await getRelatedProducts(product)
+  } catch {
+    return fallbackProducts
+      .filter(
+        (item) => item.category === product.category && item.id !== product.id
+      )
+      .slice(0, 3)
+      .map((item) => toFallbackProduct(item.id))
+      .filter((item): item is ProductDocument => item !== null)
+  }
 }
 
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { id } = await params
-  const product = await getProductById(id)
+  const product = await loadProduct(id)
   if (!product) return {}
 
   return {
@@ -54,10 +102,10 @@ function formatDate(value: string) {
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params
-  const product = await getProductById(id)
+  const product = await loadProduct(id)
   if (!product) notFound()
 
-  const related = await getRelatedProducts(product)
+  const related = await loadRelatedProducts(product)
   const reviewItems = product.reviewItems ?? []
   const materials = product.materials ?? []
   const galleryImages = [

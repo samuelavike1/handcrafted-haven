@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server"
+import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { Globe2, Leaf, Mail, Share2, ShieldCheck } from "lucide-react"
 import LanguageSwitcher from "@/components/language-switcher"
@@ -7,8 +7,8 @@ interface FooterProps {
   variant?: "default" | "catalog" | "product"
 }
 
-export default async function Footer({ variant = "default" }: FooterProps) {
-  const t = await getTranslations("footer")
+export default function Footer({ variant = "default" }: FooterProps) {
+  const t = useTranslations("footer")
 
   const columns = {
     [t("marketplace")]: [
