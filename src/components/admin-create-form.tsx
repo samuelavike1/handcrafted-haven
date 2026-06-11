@@ -1,7 +1,14 @@
 "use client"
 
 import { FormEvent, useState } from "react"
-import { AlertCircle, Loader2, Lock, Mail, UserRound, CheckCircle2 } from "lucide-react"
+import {
+  AlertCircle,
+  Loader2,
+  Lock,
+  Mail,
+  UserRound,
+  CheckCircle2,
+} from "lucide-react"
 import { toast } from "sonner"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { AppUser } from "@/lib/auth"
@@ -81,9 +88,10 @@ export default function AdminCreateForm({
       {/* Requirements notice */}
       <div className="flex items-start gap-3 rounded-xl border border-[#c6ead9] bg-[#f4fdf8] p-3.5">
         <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[#0b5345]" />
-        <p className="text-xs font-semibold leading-relaxed text-[#1a5c3a]">
+        <p className="text-xs leading-relaxed font-semibold text-[#1a5c3a]">
           Only signed-in admins can create another admin account. The new user
-          will be able to sign in immediately at <span className="font-black">/admin</span>.
+          will be able to sign in immediately at{" "}
+          <span className="font-black">/admin</span>.
         </p>
       </div>
 
@@ -121,10 +129,12 @@ export default function AdminCreateForm({
       {message && (
         <Alert
           variant="destructive"
-          className="border-[#f0b8b8] bg-[#fff7f7] text-[#7a1d1d] rounded-xl"
+          className="rounded-xl border-[#f0b8b8] bg-[#fff7f7] text-[#7a1d1d]"
         >
           <AlertCircle size={16} />
-          <AlertTitle className="font-black">Account creation failed</AlertTitle>
+          <AlertTitle className="font-black">
+            Account creation failed
+          </AlertTitle>
           <AlertDescription className="font-medium">{message}</AlertDescription>
         </Alert>
       )}
@@ -167,7 +177,7 @@ function AdminInput({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-[#53615c]">
+      <span className="mb-1.5 block text-xs font-bold tracking-wide text-[#53615c] uppercase">
         {label}
       </span>
       <span className="relative block">
@@ -179,7 +189,7 @@ function AdminInput({
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className={`h-10 w-full rounded-md border bg-white pr-3 pl-9 text-sm font-medium outline-none transition-all placeholder:text-[#bfc9c4] focus:ring-4 ${
+          className={`h-10 w-full rounded-md border bg-white pr-3 pl-9 text-sm font-medium transition-all outline-none placeholder:text-[#bfc9c4] focus:ring-4 ${
             error
               ? "border-[#ba1a1a] focus:border-[#ba1a1a] focus:ring-[#ba1a1a]/10"
               : "border-[#d8dfdc] focus:border-[#063f34] focus:ring-[#063f34]/8"

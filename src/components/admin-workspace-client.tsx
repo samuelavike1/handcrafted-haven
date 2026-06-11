@@ -17,7 +17,6 @@ import {
   Package,
   Bell,
   ChevronRight,
-  ArrowUpRight,
   Circle,
   Menu,
   X,
@@ -279,7 +278,7 @@ export default function AdminWorkspaceClient({
                   <p className="text-[11px] font-black tracking-[0.14em] text-[#f7b071] uppercase">
                     Handcrafted Haven
                   </p>
-                  <p className="text-base font-black leading-tight text-white">
+                  <p className="text-base leading-tight font-black text-white">
                     Admin Console
                   </p>
                 </div>
@@ -336,7 +335,10 @@ export default function AdminWorkspaceClient({
                 </span>
                 {label}
                 {activeView === id && (
-                  <ChevronRight size={14} className="ml-auto text-[#063f34]/60" />
+                  <ChevronRight
+                    size={14}
+                    className="ml-auto text-[#063f34]/60"
+                  />
                 )}
               </button>
             ))}
@@ -344,7 +346,7 @@ export default function AdminWorkspaceClient({
 
           {/* System status footer */}
           <div className="border-t border-white/10 p-4">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="mb-3 flex items-center gap-2">
               <Circle size={7} className="fill-emerald-400 text-emerald-400" />
               <p className="text-xs font-bold text-white/80">System online</p>
             </div>
@@ -355,7 +357,9 @@ export default function AdminWorkspaceClient({
               </div>
               <div className="rounded-lg bg-white/8 px-3 py-2">
                 <p className="text-[10px] text-white/45">Products</p>
-                <p className="text-sm font-black text-white">{stats.products}</p>
+                <p className="text-sm font-black text-white">
+                  {stats.products}
+                </p>
               </div>
             </div>
           </div>
@@ -383,7 +387,7 @@ export default function AdminWorkspaceClient({
                     {currentNavItem?.label}
                   </span>
                 </div>
-                <h2 className="mt-0.5 text-lg font-black text-[#063f34] leading-tight">
+                <h2 className="mt-0.5 text-lg leading-tight font-black text-[#063f34]">
                   Marketplace Control Center
                 </h2>
               </div>
@@ -397,7 +401,7 @@ export default function AdminWorkspaceClient({
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  className="h-9 w-[300px] rounded-md border border-[#d8dfdc] bg-[#f4f6f5] pr-3 pl-9 text-sm font-medium outline-none placeholder:text-[#9aada8] focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/8 transition-all"
+                  className="h-9 w-[300px] rounded-md border border-[#d8dfdc] bg-[#f4f6f5] pr-3 pl-9 text-sm font-medium transition-all outline-none placeholder:text-[#9aada8] focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/8"
                   placeholder="Search orders, products, users…"
                 />
               </div>
@@ -413,7 +417,7 @@ export default function AdminWorkspaceClient({
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
-                  className="h-9 w-full rounded-md border border-[#d8dfdc] bg-[#f4f6f5] pr-3 pl-9 text-sm font-medium outline-none placeholder:text-[#9aada8] focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/8 transition-all"
+                  className="h-9 w-full rounded-md border border-[#d8dfdc] bg-[#f4f6f5] pr-3 pl-9 text-sm font-medium transition-all outline-none placeholder:text-[#9aada8] focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/8"
                   placeholder="Search…"
                 />
               </div>
@@ -422,46 +426,50 @@ export default function AdminWorkspaceClient({
 
           {/* Page body */}
           <div className="flex-1 space-y-5 p-4 sm:p-6">
-
             {/* ── Stat cards ── */}
             {(activeView === "overview" || activeView === "orders") && (
               <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {statCards.map(({ label, value, hint, icon: Icon, accent, bg, trend }) => (
-                  <article
-                    key={label}
-                    className="group relative overflow-hidden rounded-lg border border-[#d8dfdc] bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
-                  >
-                    {/* Coloured top strip */}
-                    <div className="h-1 w-full" style={{ backgroundColor: accent }} />
+                {statCards.map(
+                  ({ label, value, hint, icon: Icon, accent, bg, trend }) => (
+                    <article
+                      key={label}
+                      className="group relative overflow-hidden rounded-lg border border-[#d8dfdc] bg-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      {/* Coloured top strip */}
+                      <div
+                        className="h-1 w-full"
+                        style={{ backgroundColor: accent }}
+                      />
 
-                    <div className="p-5">
-                      {/* Icon row */}
-                      <div className="flex items-center justify-between">
-                        <div
-                          className="flex h-9 w-9 items-center justify-center rounded-lg"
-                          style={{ backgroundColor: bg, color: accent }}
-                        >
-                          <Icon size={18} />
+                      <div className="p-5">
+                        {/* Icon row */}
+                        <div className="flex items-center justify-between">
+                          <div
+                            className="flex h-9 w-9 items-center justify-center rounded-lg"
+                            style={{ backgroundColor: bg, color: accent }}
+                          >
+                            <Icon size={18} />
+                          </div>
+                          <span
+                            className="rounded-md px-2 py-0.5 text-[10px] font-bold"
+                            style={{ backgroundColor: bg, color: accent }}
+                          >
+                            {trend}
+                          </span>
                         </div>
-                        <span
-                          className="rounded-md px-2 py-0.5 text-[10px] font-bold"
-                          style={{ backgroundColor: bg, color: accent }}
-                        >
-                          {trend}
-                        </span>
-                      </div>
 
-                      {/* Text */}
-                      <p className="mt-4 text-[11px] font-bold uppercase tracking-widest text-[#9aada8]">
-                        {label}
-                      </p>
-                      <p className="mt-1 text-2xl font-black text-[#191c1c]">
-                        {value}
-                      </p>
-                      <p className="mt-1 text-xs text-[#6d7a75]">{hint}</p>
-                    </div>
-                  </article>
-                ))}
+                        {/* Text */}
+                        <p className="mt-4 text-[11px] font-bold tracking-widest text-[#9aada8] uppercase">
+                          {label}
+                        </p>
+                        <p className="mt-1 text-2xl font-black text-[#191c1c]">
+                          {value}
+                        </p>
+                        <p className="mt-1 text-xs text-[#6d7a75]">{hint}</p>
+                      </div>
+                    </article>
+                  )
+                )}
               </section>
             )}
 
@@ -480,7 +488,7 @@ export default function AdminWorkspaceClient({
                     })
                   }
                 />
-                <div className="grid gap-5 content-start">
+                <div className="grid content-start gap-5">
                   <OperationsPanel
                     title="Operational Alerts"
                     items={[
@@ -589,7 +597,7 @@ export default function AdminWorkspaceClient({
 
       {/* ── Add user dialog ── */}
       <Dialog open={createUserOpen} onOpenChange={setCreateUserOpen}>
-        <DialogContent className="max-w-[760px] border-[#d8dfdc] bg-[#f4f6f5] p-0 text-[#191c1c] overflow-hidden rounded-lg">
+        <DialogContent className="max-w-[760px] overflow-hidden rounded-lg border-[#d8dfdc] bg-[#f4f6f5] p-0 text-[#191c1c]">
           <DialogHeader className="border-b border-[#d8dfdc] bg-white px-6 py-5 pr-14">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#edf7f4]">
@@ -623,7 +631,7 @@ export default function AdminWorkspaceClient({
           if (!open && !isDeleting) setDeleteTarget(null)
         }}
       >
-        <DialogContent className="max-w-[420px] border-[#f0b8b8] bg-white text-[#191c1c] rounded-lg overflow-hidden p-0">
+        <DialogContent className="max-w-[420px] overflow-hidden rounded-lg border-[#f0b8b8] bg-white p-0 text-[#191c1c]">
           <div className="bg-[#fff7f7] px-6 pt-6 pb-4">
             <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-[#ffe4e4]">
               <AlertTriangle size={22} className="text-[#ba1a1a]" />
@@ -632,9 +640,8 @@ export default function AdminWorkspaceClient({
               <DialogTitle className="text-lg font-black text-[#191c1c]">
                 Confirm Deletion
               </DialogTitle>
-              <DialogDescription className="text-sm text-[#53615c] mt-1">
-                This action is permanent and cannot be undone. This will
-                remove{" "}
+              <DialogDescription className="mt-1 text-sm text-[#53615c]">
+                This action is permanent and cannot be undone. This will remove{" "}
                 <span className="font-bold text-[#191c1c]">
                   {deleteTarget?.label}
                 </span>{" "}
@@ -655,7 +662,7 @@ export default function AdminWorkspaceClient({
               type="button"
               onClick={confirmDelete}
               disabled={isDeleting}
-              className="inline-flex items-center justify-center rounded-lg bg-[#ba1a1a] px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#9e1515] disabled:cursor-not-allowed disabled:opacity-70 shadow-sm"
+              className="inline-flex items-center justify-center rounded-lg bg-[#ba1a1a] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#9e1515] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isDeleting && (
                 <Loader2 className="mr-2 animate-spin" size={15} />
@@ -709,7 +716,7 @@ function OrdersTable({
                 className="group transition-colors hover:bg-[#f9faf9]"
               >
                 <td className="px-4 py-3.5">
-                  <p className="font-black text-[#063f34] font-mono text-xs">
+                  <p className="font-mono text-xs font-black text-[#063f34]">
                     {order.id}
                   </p>
                   <p className="mt-0.5 text-xs text-[#9aada8]">
@@ -730,7 +737,8 @@ function OrdersTable({
                 </td>
                 <td className="px-4 py-3.5">
                   <span className="rounded-full bg-[#edf7f4] px-2.5 py-0.5 text-xs font-bold text-[#063f34]">
-                    {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                    {order.items.length} item
+                    {order.items.length !== 1 ? "s" : ""}
                   </span>
                 </td>
                 <td className="px-4 py-3.5 font-black text-[#191c1c]">
@@ -806,11 +814,11 @@ function ProductsTable({
               >
                 <td className="px-4 py-3.5">
                   <p className="font-bold text-[#191c1c]">{product.name}</p>
-                  <p className="mt-0.5 text-xs text-[#9aada8] uppercase tracking-wide font-medium">
+                  <p className="mt-0.5 text-xs font-medium tracking-wide text-[#9aada8] uppercase">
                     {product.category}
                   </p>
                 </td>
-                <td className="px-4 py-3.5 text-[#53615c] font-medium">
+                <td className="px-4 py-3.5 font-medium text-[#53615c]">
                   {product.seller}
                 </td>
                 <td className="px-4 py-3.5">
@@ -867,7 +875,7 @@ function UsersTable({
         <button
           type="button"
           onClick={onAddUser}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#063f34] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#075144] focus:ring-4 focus:ring-[#063f34]/15 focus:outline-none shadow-sm"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#063f34] px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#075144] focus:ring-4 focus:ring-[#063f34]/15 focus:outline-none"
         >
           <ShieldCheck size={15} />
           Add admin user
@@ -909,12 +917,10 @@ function UsersTable({
                 <td className="px-4 py-3.5">
                   <RoleBadge role={user.role} />
                 </td>
-                <td className="px-4 py-3.5 text-[#53615c] font-medium">
-                  {user.studioName ?? (
-                    <span className="text-[#bfc9c4]">—</span>
-                  )}
+                <td className="px-4 py-3.5 font-medium text-[#53615c]">
+                  {user.studioName ?? <span className="text-[#bfc9c4]">—</span>}
                 </td>
-                <td className="px-4 py-3.5 text-[#9aada8] font-medium">
+                <td className="px-4 py-3.5 font-medium text-[#9aada8]">
                   {new Date(user.createdAt).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -944,7 +950,13 @@ type AlertItem = {
   type: "ok" | "warning" | "info"
 }
 
-function OperationsPanel({ title, items }: { title: string; items: AlertItem[] }) {
+function OperationsPanel({
+  title,
+  items,
+}: {
+  title: string
+  items: AlertItem[]
+}) {
   const typeStyles = {
     ok: {
       dot: "bg-emerald-400",
@@ -967,7 +979,7 @@ function OperationsPanel({ title, items }: { title: string; items: AlertItem[] }
   }
 
   return (
-    <section className="rounded-lg border border-[#d8dfdc] bg-white overflow-hidden">
+    <section className="overflow-hidden rounded-lg border border-[#d8dfdc] bg-white">
       <div className="border-b border-[#e8edeb] bg-[#f9faf9] px-5 py-4">
         <p className="text-[10px] font-black tracking-widest text-[#9aada8] uppercase">
           Admin Briefing
@@ -982,8 +994,10 @@ function OperationsPanel({ title, items }: { title: string; items: AlertItem[] }
               key={i}
               className={`flex items-start gap-3 rounded-lg border p-3.5 ${s.bg} ${s.border}`}
             >
-              <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${s.dot}`} />
-              <p className={`text-sm font-semibold leading-relaxed ${s.text}`}>
+              <span
+                className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${s.dot}`}
+              />
+              <p className={`text-sm leading-relaxed font-semibold ${s.text}`}>
                 {item.text}
               </p>
             </div>
@@ -1052,7 +1066,9 @@ function ProductStatusBadge({ status }: { status: string }) {
   }
   const cls = variants[status] ?? "bg-[#f4f6f5] text-[#53615c]"
   return (
-    <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold capitalize ${cls}`}>
+    <span
+      className={`rounded-full px-2.5 py-0.5 text-xs font-bold capitalize ${cls}`}
+    >
       {status}
     </span>
   )
@@ -1066,7 +1082,9 @@ function RoleBadge({ role }: { role: string }) {
   }
   const cls = variants[role] ?? "bg-[#f4f6f5] text-[#53615c]"
   return (
-    <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold capitalize ${cls}`}>
+    <span
+      className={`rounded-full px-2.5 py-0.5 text-xs font-bold capitalize ${cls}`}
+    >
       {role}
     </span>
   )

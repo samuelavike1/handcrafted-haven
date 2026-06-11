@@ -175,6 +175,16 @@ export async function getUsers() {
   return users as AppUser[]
 }
 
+export async function getUserById(id: string) {
+  const db = await getDb()
+  await ensureAuthIndexes(db)
+  const user = await db
+    .collection<UserDocument>(usersCollection)
+    .findOne({ id })
+
+  return user ? publicUser(user) : null
+}
+
 export async function deleteUserById(id: string) {
   const db = await getDb()
   await ensureAuthIndexes(db)

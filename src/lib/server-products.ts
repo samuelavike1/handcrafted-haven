@@ -3,20 +3,19 @@ import { getDb } from "@/lib/mongodb"
 import { products } from "@/lib/market-data"
 import type { ProductInput } from "@/lib/schemas"
 import type { AppUser } from "@/lib/auth"
+import {
+  buildReviewItem,
+  calculateUpdatedReviewSummary,
+  type ReviewInput,
+  type ReviewItem,
+} from "@/lib/reviews"
 
 export type ProductDocument = ProductInput & {
   id: string
   sellerId?: string
   rating: number
   reviews: number
-  reviewItems?: {
-    id: string
-    author: string
-    rating: number
-    title: string
-    comment: string
-    createdAt: string
-  }[]
+  reviewItems?: ReviewItem[]
   imageSource?: string
   createdAt: string
   updatedAt: string
@@ -159,4 +158,40 @@ export async function deleteProduct(id: string, user: AppUser) {
 
   await collection.deleteOne({ id })
   return existing
+}
+
+export async function addProductReview(
+  productId: string,
+  input: ReviewInput,
+  user: AppUser | null
+) {
+  const db = await getDb()
+  const collection = db.collection<ProductDocument>(collectionName)
+  const existing = await collection.findOne({ id: productId })
+
+  if (!existing) return null
+
+  const review = buildReviewItem(input, user)
+  const reviewItems = [review, ...(existing.reviewItems ?? [])]
+  const summary = calculateUpdatedReviewSummary(existing, review.rating)
+  const updatedAt = new Date().toISOString()
+
+  await collection.updateOne(
+    { id: productId },
+    {
+      $set: {
+        reviewItems,
+        rating: summary.rating,
+        reviews: summary.reviews,
+        updatedAt,
+      },
+    }
+  )
+
+  const product = await collection.findOne(
+    { id: productId },
+    { projection: { _id: 0 } }
+  )
+
+  return { product, review }
 }

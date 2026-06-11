@@ -17,17 +17,13 @@ type ProductDetailClientProps = {
     category?: string
     description?: string
   }
-  galleryImages: string[]
   variant: "gallery" | "actions"
 }
 
 export default function ProductDetailClient({
   product,
-  galleryImages,
   variant,
 }: ProductDetailClientProps) {
-  const images = galleryImages.length ? galleryImages : [product.image]
-  const [activeImage, setActiveImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [saved, setSaved] = useState(false)
 
@@ -78,40 +74,15 @@ export default function ProductDetailClient({
 
   if (variant === "gallery") {
     return (
-      <div>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#edf2ef]">
-          <ShimmerImage
-            src={images[activeImage]}
-            alt={product.name}
-            fill
-            priority
-            className="object-cover"
-            unoptimized
-          />
-        </div>
-        <div className="mt-3 grid grid-cols-4 gap-2">
-          {images.map((image, index) => (
-            <button
-              key={`${image}-${index}`}
-              type="button"
-              onClick={() => setActiveImage(index)}
-              className={`relative aspect-[4/3] overflow-hidden rounded-lg border-2 bg-[#edf2ef] transition ${
-                activeImage === index
-                  ? "border-[#063f34] ring-4 ring-[#063f34]/10"
-                  : "border-transparent hover:border-[#cfd9d4]"
-              }`}
-              aria-label={`View product image ${index + 1}`}
-            >
-              <ShimmerImage
-                src={image}
-                alt=""
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            </button>
-          ))}
-        </div>
+      <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-[#d8dfdc] bg-[#edf2ef]">
+        <ShimmerImage
+          src={product.image}
+          alt={product.name}
+          fill
+          priority
+          className="object-cover"
+          unoptimized
+        />
       </div>
     )
   }
@@ -124,7 +95,7 @@ export default function ProductDetailClient({
             type="button"
             onClick={() => setQuantity((value) => Math.max(1, value - 1))}
             aria-label="Decrease quantity"
-            className="text-[#53615c] hover:text-[#063f34]"
+            className="rounded-sm text-[#53615c] hover:text-[#063f34] focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
           >
             <Minus size={17} />
           </button>
@@ -135,7 +106,7 @@ export default function ProductDetailClient({
               setQuantity((value) => Math.min(product.stock, value + 1))
             }
             aria-label="Increase quantity"
-            className="text-[#53615c] hover:text-[#063f34]"
+            className="rounded-sm text-[#53615c] hover:text-[#063f34] focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
           >
             <Plus size={17} />
           </button>
@@ -144,7 +115,7 @@ export default function ProductDetailClient({
           type="button"
           onClick={addToCart}
           disabled={product.stock <= 0}
-          className="h-9 flex-1 rounded-md bg-[#f28a35] px-4 text-sm font-black text-white transition hover:bg-[#dc7624] disabled:cursor-not-allowed disabled:opacity-60"
+          className="h-9 flex-1 rounded-md bg-[#f28a35] px-4 text-sm font-black text-white transition hover:bg-[#dc7624] focus:ring-2 focus:ring-[#f28a35]/30 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         >
           Add to cart
         </button>
@@ -152,7 +123,7 @@ export default function ProductDetailClient({
       <button
         type="button"
         onClick={toggleFavorite}
-        className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-md border border-[#063f34] text-sm font-black text-[#063f34] transition hover:bg-[#edf2ef]"
+        className="mt-3 flex h-9 w-full items-center justify-center gap-2 rounded-md border border-[#063f34] text-sm font-black text-[#063f34] transition hover:bg-[#edf2ef] focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
       >
         <Heart size={18} fill={saved ? "currentColor" : "none"} />
         {saved ? "Saved" : "Save to collection"}

@@ -25,6 +25,8 @@ type CheckoutForm = {
   postalCode: string
 }
 
+type CheckoutErrors = Partial<Record<keyof CheckoutForm, string>>
+
 type CurrentUser = {
   name: string
   email: string
@@ -43,6 +45,7 @@ const initialForm: CheckoutForm = {
 export default function CheckoutPage() {
   const [items, setItems] = useState<CartItem[]>([])
   const [form, setForm] = useState(initialForm)
+  const [errors, setErrors] = useState<CheckoutErrors>({})
   const [paymentMethod, setPaymentMethod] = useState<"card" | "wallet">("card")
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -95,15 +98,45 @@ export default function CheckoutPage() {
 
   const updateField = (field: keyof CheckoutForm, value: string) => {
     setForm((current) => ({ ...current, [field]: value }))
+    setErrors((current) => ({ ...current, [field]: undefined }))
+    setMessage("")
+  }
+
+  const validateCheckout = () => {
+    const nextErrors: CheckoutErrors = {}
+    if (form.name.trim().length < 2) {
+      nextErrors.name = "Full name is required."
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      nextErrors.email = "Enter a valid email address."
+    }
+    if (form.street.trim().length < 4) {
+      nextErrors.street = "Street address is required."
+    }
+    if (form.city.trim().length < 2) {
+      nextErrors.city = "City is required."
+    }
+    if (form.postalCode.trim().length < 3) {
+      nextErrors.postalCode = "ZIP or postal code is required."
+    }
+    return nextErrors
   }
 
   const placeOrder = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setMessage("")
     setOrderId("")
+    setErrors({})
 
     if (user && user.role !== "buyer" && user.role !== "admin") {
       setMessage("Use a buyer account or continue without signing in.")
+      return
+    }
+
+    const checkoutErrors = validateCheckout()
+    if (Object.keys(checkoutErrors).length > 0) {
+      setErrors(checkoutErrors)
+      setMessage("Fix the highlighted checkout fields before placing order.")
       return
     }
 
@@ -125,6 +158,9 @@ export default function CheckoutPage() {
       const data = await response.json()
 
       if (!response.ok) {
+        if (data.errors?.customer) {
+          setMessage(data.errors.customer[0] ?? "Please review your details.")
+        }
         throw new Error(data.error ?? "Please review your checkout details.")
       }
 
@@ -263,7 +299,8 @@ export default function CheckoutPage() {
                         {label}
                       </span>
                       <input
-                        required={field !== "apartment"}
+                        id={`checkout-${field}`}
+                        name={field}
                         type={field === "email" ? "email" : "text"}
                         value={form[field as keyof CheckoutForm]}
                         onChange={(event) =>
@@ -272,8 +309,28 @@ export default function CheckoutPage() {
                             event.target.value
                           )
                         }
-                        className="h-9 w-full rounded-lg border border-hh-border bg-hh-card px-3 outline-none focus:border-[#063f34] focus:ring-4 focus:ring-[#063f34]/10"
+                        aria-invalid={Boolean(
+                          errors[field as keyof CheckoutForm]
+                        )}
+                        aria-describedby={
+                          errors[field as keyof CheckoutForm]
+                            ? `checkout-${field}-error`
+                            : undefined
+                        }
+                        className={`h-9 w-full rounded-lg border bg-hh-card px-3 outline-none focus:ring-4 ${
+                          errors[field as keyof CheckoutForm]
+                            ? "border-[#ba1a1a] focus:border-[#ba1a1a] focus:ring-[#ba1a1a]/10"
+                            : "border-hh-border focus:border-[#063f34] focus:ring-[#063f34]/10"
+                        }`}
                       />
+                      {errors[field as keyof CheckoutForm] && (
+                        <span
+                          id={`checkout-${field}-error`}
+                          className="mt-1 block text-xs font-semibold text-[#ba1a1a]"
+                        >
+                          {errors[field as keyof CheckoutForm]}
+                        </span>
+                      )}
                     </label>
                   ))}
                 </div>

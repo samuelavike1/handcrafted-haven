@@ -31,6 +31,7 @@ const sortOptions = [
   "Price: low to high",
   "Price: high to low",
   "Top rated",
+  "Most reviewed",
 ]
 
 function matchesPrice(price: number, range: string) {
@@ -125,12 +126,20 @@ export default function ProductCatalogClient({
       .filter((product) => matchesPrice(product.price, priceRange))
       .filter((product) => matchesValue(product, selectedValue))
 
-    if (sort === "Price: low to high") {
+    if (sort === "Newest first") {
+      nextProducts.sort(
+        (a, b) =>
+          new Date(b.createdAt ?? 0).getTime() -
+          new Date(a.createdAt ?? 0).getTime()
+      )
+    } else if (sort === "Price: low to high") {
       nextProducts.sort((a, b) => a.price - b.price)
     } else if (sort === "Price: high to low") {
       nextProducts.sort((a, b) => b.price - a.price)
     } else if (sort === "Top rated") {
       nextProducts.sort((a, b) => b.rating - a.rating)
+    } else if (sort === "Most reviewed") {
+      nextProducts.sort((a, b) => (b.reviews ?? 0) - (a.reviews ?? 0))
     }
 
     return nextProducts

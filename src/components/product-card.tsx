@@ -12,6 +12,7 @@ export interface Product {
   id: string
   name: string
   seller: string
+  sellerId?: string
   sellerLocation?: string
   price: number
   rating: number
@@ -22,6 +23,9 @@ export interface Product {
   badge?: string
   materials?: string[]
   description?: string
+  stock?: number
+  status?: "Active" | "Low stock" | "Draft"
+  createdAt?: string
 }
 
 interface ProductCardProps {
@@ -51,6 +55,49 @@ function RatingRow({ rating, reviews }: { rating: number; reviews?: number }) {
   )
 }
 
+function StockBadge({ product }: { product: Product }) {
+  const isSoldOut = typeof product.stock === "number" && product.stock <= 0
+  const isLowStock =
+    typeof product.stock === "number" &&
+    product.stock > 0 &&
+    (product.stock <= 3 || product.status === "Low stock")
+
+  if (!isLowStock && !isSoldOut) return null
+
+  return (
+    <p
+      className={`mb-2 inline-flex rounded-md px-2 py-1 text-[11px] font-black ${
+        isSoldOut
+          ? "bg-[#fff0f0] text-[#8b1f1f]"
+          : "bg-[#fff4e8] text-[#9a4d10]"
+      }`}
+    >
+      {isSoldOut ? "Sold out" : `${product.stock} left`}
+    </p>
+  )
+}
+
+function SellerLine({ product }: { product: Product }) {
+  const t = useTranslations("common")
+  const sellerHref = product.sellerId ? `/seller/${product.sellerId}` : null
+
+  return (
+    <p>
+      {t("by")}{" "}
+      {sellerHref ? (
+        <Link
+          href={sellerHref}
+          className="font-semibold text-hh-body transition hover:text-[#063f34] hover:underline"
+        >
+          {product.seller}
+        </Link>
+      ) : (
+        <span className="font-semibold text-hh-body">{product.seller}</span>
+      )}
+    </p>
+  )
+}
+
 function SaveButton({
   saved,
   onToggle,
@@ -67,7 +114,7 @@ function SaveButton({
         saved
           ? "border-[#c8651b] bg-[#fff4e8] text-[#c8651b] dark:bg-[#2a1800]"
           : "border-hh-border bg-hh-card text-hh-muted hover:border-[#c8651b] hover:text-[#c8651b]"
-      }`}
+      } focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none`}
       aria-label={label}
     >
       <Heart size={16} fill={saved ? "currentColor" : "none"} />
@@ -194,7 +241,10 @@ function GridCard({
 
   return (
     <article className="group overflow-hidden rounded-lg border border-hh-border bg-hh-card transition duration-300 hover:-translate-y-0.5 hover:border-[#063f34]/40 hover:shadow-[0_10px_22px_rgba(18,40,33,0.08)]">
-      <Link href={`/product/${product.id}`} className="block">
+      <Link
+        href={`/product/${product.id}`}
+        className="block focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
+      >
         <div
           className={`relative overflow-hidden bg-hh-subtle ${compact ? "aspect-[4/2.8]" : "aspect-[4/2.45]"}`}
         >
@@ -219,7 +269,10 @@ function GridCard({
         <div className="mb-2 flex items-start justify-between gap-3">
           <div>
             <CategoryLabel text={product.category} />
-            <Link href={`/product/${product.id}`}>
+            <Link
+              href={`/product/${product.id}`}
+              className="rounded-sm focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
+            >
               <h3 className="mt-1 text-sm leading-snug font-bold text-hh-heading transition group-hover:text-[#0b5b4a]">
                 {product.name}
               </h3>
@@ -232,11 +285,10 @@ function GridCard({
           />
         </div>
 
+        <StockBadge product={product} />
+
         <div className="mb-2 space-y-0.5 text-xs text-hh-muted">
-          <p>
-            {t("by")}{" "}
-            <span className="font-semibold text-hh-body">{product.seller}</span>
-          </p>
+          <SellerLine product={product} />
           {product.sellerLocation && (
             <p className="flex items-center gap-1.5">
               <MapPin size={12} /> {product.sellerLocation}
@@ -269,7 +321,7 @@ function GridCard({
           {showAction && (
             <Link
               href={`/product/${product.id}`}
-              className="inline-flex h-8 min-w-0 flex-1 items-center justify-center rounded-md bg-[#063f34] px-3 text-xs font-bold text-white transition hover:bg-[#0b5b4a]"
+              className="inline-flex h-8 min-w-0 flex-1 items-center justify-center rounded-md bg-[#063f34] px-3 text-xs font-bold text-white transition hover:bg-[#0b5b4a] focus:ring-2 focus:ring-[#063f34]/25 focus:outline-none"
             >
               {t("view")}
             </Link>
@@ -312,12 +364,7 @@ function ListCard({ product }: { product: Product }) {
           </Link>
 
           <div className="mt-1.5 space-y-0.5 text-xs text-hh-muted">
-            <p>
-              {t("by")}{" "}
-              <span className="font-semibold text-hh-body">
-                {product.seller}
-              </span>
-            </p>
+            <SellerLine product={product} />
             {product.sellerLocation && (
               <p className="flex items-center gap-1">
                 <MapPin size={11} /> {product.sellerLocation}

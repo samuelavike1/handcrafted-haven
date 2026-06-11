@@ -1,51 +1,32 @@
-import Link from "next/link"
-import { ShieldCheck } from "lucide-react"
-import Navbar from "@/components/navbar"
-import Footer from "@/components/footer"
 import AuthForm from "@/components/auth-form"
+import AuthShell from "@/components/auth-shell"
+import { images } from "@/lib/images"
 
 export const metadata = {
-  title: "Buyer Sign In | Handcrafted Haven",
+  title: "Sign In | Handcrafted Haven",
   description: "Sign in to your buyer account.",
 }
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#fbfbf8]">
-      <Navbar />
-
-      <main className="mx-auto grid max-w-[1080px] gap-6 px-4 py-8 sm:px-5 lg:grid-cols-[0.9fr_1.1fr] lg:px-6">
-        <section className="flex flex-col justify-center">
-          <p className="text-xs font-black text-[#9a4d10] uppercase">
-            Buyer access
-          </p>
-          <h1 className="mt-2 max-w-xl text-3xl font-black tracking-tight text-[#063f34]">
-            Sign in to continue shopping.
-          </h1>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-[#53615c]">
-            Manage orders, saved pieces, reviews, and checkout details from your
-            buyer account.
-          </p>
-          <div className="mt-5 rounded-lg border border-[#d8dfdc] bg-white p-4">
-            <ShieldCheck className="text-[#063f34]" size={22} />
-            <p className="mt-3 text-sm font-bold text-[#063f34]">
-              New to Handcrafted Haven?
-            </p>
-            <Link
-              href="/register"
-              className="mt-3 inline-flex rounded-lg bg-[#f28a35] px-4 py-2 text-sm font-black text-white"
-            >
-              Create account
-            </Link>
-          </div>
-        </section>
-
-        <section className="rounded-lg border border-[#d8dfdc] bg-white p-5 shadow-[0_12px_28px_rgba(18,40,33,0.08)]">
-          <AuthForm mode="login" defaultRole="buyer" showSellerLink />
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+    <AuthShell
+      background={images.categoryPottery}
+      eyebrow="Buyer access"
+      title={
+        <>
+          Welcome
+          <br />
+          <span className="text-[#d4b896]">back.</span>
+        </>
+      }
+      description="Sign in to continue shopping, view saved pieces, and track handcrafted orders."
+      actionHref="/register"
+      actionLabel="Create account"
+      formEyebrow="Sign in"
+      footerNote={`© ${new Date().getFullYear()} Handcrafted Haven`}
+      trustPoints={["Saved pieces", "Order history", "Guest checkout"]}
+    >
+      <AuthForm mode="login" defaultRole="buyer" showSellerLink />
+    </AuthShell>
   )
 }

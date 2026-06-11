@@ -20,10 +20,31 @@ import {
 } from "@/lib/market-data"
 import { images } from "@/lib/images"
 import ShimmerImage from "@/components/ui/shimmer-image"
+import { getProducts } from "@/lib/server-products"
 
-const featuredProducts = products.slice(0, 4)
+async function getHomepageProducts() {
+  try {
+    return await getProducts()
+  } catch {
+    return []
+  }
+}
 
 export default async function HomePage() {
+  const dbProducts = await getHomepageProducts()
+  const featuredProducts = dbProducts
+    .filter((product) => product.status !== "Draft")
+    .sort((a, b) => {
+      if (b.rating !== a.rating) return b.rating - a.rating
+      return b.reviews - a.reviews
+    })
+    .slice(0, 4)
+  const fallbackProducts = products.slice(0, 4)
+  const homepageProducts = featuredProducts.length
+    ? featuredProducts
+    : fallbackProducts
+  const heroProduct = homepageProducts[0] ?? products[0]
+
   const t = await getTranslations("home")
   const tCat = await getTranslations("categories")
   const tProd = await getTranslations("products")
@@ -38,7 +59,9 @@ export default async function HomePage() {
     description: tCat(`${cat.slug}.description` as Parameters<typeof tCat>[0]),
   }))
 
-  const translatedFeaturedProducts = featuredProducts.map((p) => ({
+  // Map over homepageProducts (DB results or static fallback) so the showcase
+  // always renders; static fallback IDs resolve their translation keys.
+  const translatedFeaturedProducts = homepageProducts.map((p) => ({
     ...p,
     name: tProd(`${p.id}.name` as Parameters<typeof tProd>[0]),
     description: tProd(`${p.id}.description` as Parameters<typeof tProd>[0]),
@@ -155,8 +178,8 @@ export default async function HomePage() {
               <div className="rounded-lg bg-[#fbfbf8] p-2.5">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-md">
                   <ShimmerImage
-                    src={products[0].image}
-                    alt={products[0].name}
+                    src={heroProduct.image}
+                    alt={heroProduct.name}
                     fill
                     className="object-cover"
                     unoptimized
@@ -172,7 +195,7 @@ export default async function HomePage() {
                         size={15}
                         className="fill-[#c8651b] text-[#c8651b]"
                       />{" "}
-                      4.9
+                      {heroProduct.rating}
                     </span>
                   </div>
                   <h2 className="text-lg font-black text-[#063f34]">
@@ -183,10 +206,10 @@ export default async function HomePage() {
                   </p>
                   <div className="mt-4 flex items-center justify-between">
                     <p className="text-lg font-black">
-                      ${products[0].price.toFixed(2)}
+                      ${heroProduct.price.toFixed(2)}
                     </p>
                     <Link
-                      href="/product/moonlight-vase"
+                      href={`/product/${heroProduct.id}`}
                       className="rounded-md bg-[#063f34] px-3 py-2 text-xs font-black text-white"
                     >
                       {t("viewPiece")}
@@ -372,7 +395,7 @@ export default async function HomePage() {
                       src={story.image}
                       alt={story.title}
                       fill
-                      className="object-cover transition duration-700 group-hover:scale-105"
+                      className="object-cover"
                       unoptimized
                     />
                   </div>

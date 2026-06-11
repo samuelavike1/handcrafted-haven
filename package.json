@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "db:seed": "node scripts/seed.mjs",
+    "test": "node --test --experimental-strip-types tests/**/*.test.ts",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
