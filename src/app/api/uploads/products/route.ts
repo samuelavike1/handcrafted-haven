@@ -1,5 +1,4 @@
-import { mkdir, writeFile } from "fs/promises"
-import path from "path"
+import { put } from "@vercel/blob"
 import { NextResponse } from "next/server"
 import { getCurrentUser, hasRole } from "@/lib/server-auth"
 
@@ -91,16 +90,19 @@ export async function POST(request: Request) {
       )
     }
 
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "products")
-    await mkdir(uploadsDir, { recursive: true })
-
     const imageUrls = await Promise.all(
       files.map(async (file, index) => {
         const bytes = Buffer.from(await file.arrayBuffer())
         const baseName = safeBaseName(file.name) || "product"
-        const filename = `${baseName}-${Date.now()}-${index}.${extensionForType(file.type)}`
-        await writeFile(path.join(uploadsDir, filename), bytes)
-        return `/uploads/products/${filename}`
+        const filename = `products/${baseName}-${Date.now()}-${index}.${extensionForType(file.type)}`
+        const blob = await put(filename, bytes, {
+          access: "public",
+          addRandomSuffix: true,
+          contentType: file.type,
+          cacheControlMaxAge: 60 * 60 * 24 * 365,
+        })
+
+        return blob.url
       })
     )
 
