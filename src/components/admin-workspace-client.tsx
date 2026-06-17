@@ -597,7 +597,7 @@ export default function AdminWorkspaceClient({
 
       {/* ── Add user dialog ── */}
       <Dialog open={createUserOpen} onOpenChange={setCreateUserOpen}>
-        <DialogContent className="max-w-[760px] overflow-hidden rounded-lg border-[#d8dfdc] bg-[#f4f6f5] p-0 text-[#191c1c]">
+        <DialogContent className="max-w-[520px] overflow-hidden rounded-lg border-[#d8dfdc] bg-[#f4f6f5] p-0 text-[#191c1c]">
           <DialogHeader className="border-b border-[#d8dfdc] bg-white px-6 py-5 pr-14">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#edf7f4]">

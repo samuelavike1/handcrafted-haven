@@ -95,8 +95,7 @@ export default function AdminCreateForm({
         </p>
       </div>
 
-      {/* Fields grid */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="space-y-4">
         <AdminInput
           label="Full name"
           value={form.name}
