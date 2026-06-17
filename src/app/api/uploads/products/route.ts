@@ -1,5 +1,9 @@
 import { put } from "@vercel/blob"
 import { NextResponse } from "next/server"
+import {
+  getBlobUploadOptions,
+  getProductUploadError,
+} from "@/lib/product-image-upload"
 import { getCurrentUser, hasRole } from "@/lib/server-auth"
 
 export const runtime = "nodejs"
@@ -96,10 +100,8 @@ export async function POST(request: Request) {
         const baseName = safeBaseName(file.name) || "product"
         const filename = `products/${baseName}-${Date.now()}-${index}.${extensionForType(file.type)}`
         const blob = await put(filename, bytes, {
-          access: "public",
-          addRandomSuffix: true,
+          ...getBlobUploadOptions(process.env.BLOB_READ_WRITE_TOKEN),
           contentType: file.type,
-          cacheControlMaxAge: 60 * 60 * 24 * 365,
         })
 
         return blob.url
@@ -110,10 +112,12 @@ export async function POST(request: Request) {
       imageUrl: imageUrls[0],
       imageUrls,
     })
-  } catch {
+  } catch (error) {
+    console.error("Product image upload failed", error)
+    const uploadError = getProductUploadError(error)
     return NextResponse.json(
-      { error: "Product image could not be uploaded." },
-      { status: 500 }
+      { error: uploadError.message },
+      { status: uploadError.status }
     )
   }
 }
